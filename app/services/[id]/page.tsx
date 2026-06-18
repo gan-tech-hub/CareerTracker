@@ -65,7 +65,7 @@ export default async function ServiceDetailPage({
           </div>
           <form action={deleteService}>
             <input name="id" type="hidden" value={service.id} />
-            <DeleteServiceButton />
+            <DeleteServiceButton serviceName={service.name} />
           </form>
         </div>
       </Card>

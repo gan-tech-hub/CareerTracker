@@ -10,8 +10,17 @@ import {
 } from "@/lib/constants/services";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 
+type ServiceFieldErrors = {
+  name?: string;
+  type?: string;
+  status?: string;
+  login_url?: string;
+  registered_email?: string;
+};
+
 export type ServiceActionState = {
-  error?: string;
+  formError?: string;
+  fieldErrors?: ServiceFieldErrors;
 };
 
 type ServicePayload = {
@@ -52,42 +61,49 @@ function validateEmail(value: string | null) {
 
 function parseServicePayload(formData: FormData): {
   payload?: ServicePayload;
-  error?: string;
+  fieldErrors?: ServiceFieldErrors;
 } {
   const name = String(formData.get("name") ?? "").trim();
   const type = String(formData.get("type") ?? "").trim();
   const status = String(formData.get("status") ?? "").trim();
   const loginUrl = optionalText(formData, "login_url");
   const registeredEmail = optionalText(formData, "registered_email");
+  const fieldErrors: ServiceFieldErrors = {};
 
   if (!name) {
-    return { error: "サービス名を入力してください。" };
+    fieldErrors.name = "サービス名を入力してください。";
   }
 
   if (!isServiceType(type)) {
-    return { error: "種別を選択してください。" };
+    fieldErrors.type = "種別を選択してください。";
   }
 
   if (!isServiceStatus(status)) {
-    return { error: "利用状況を選択してください。" };
+    fieldErrors.status = "利用状況を選択してください。";
   }
 
   if (!validateUrl(loginUrl)) {
-    return { error: "ログインURLは http:// または https:// で入力してください。" };
+    fieldErrors.login_url =
+      "ログインURLは http:// または https:// で入力してください。";
   }
 
   if (!validateEmail(registeredEmail)) {
-    return { error: "登録メールアドレスの形式を確認してください。" };
+    fieldErrors.registered_email =
+      "登録メールアドレスの形式を確認してください。";
+  }
+
+  if (Object.keys(fieldErrors).length > 0) {
+    return { fieldErrors };
   }
 
   return {
     payload: {
       name,
-      type,
+      type: type as ServiceType,
       login_url: loginUrl,
       registered_email: registeredEmail,
       login_id: optionalText(formData, "login_id"),
-      status,
+      status: status as ServiceStatus,
       memo: optionalText(formData, "memo"),
     },
   };
@@ -97,10 +113,10 @@ export async function createService(
   _previousState: ServiceActionState,
   formData: FormData,
 ): Promise<ServiceActionState> {
-  const { payload, error } = parseServicePayload(formData);
+  const { payload, fieldErrors } = parseServicePayload(formData);
 
-  if (error || !payload) {
-    return { error };
+  if (fieldErrors || !payload) {
+    return { fieldErrors };
   }
 
   const supabase = await createSupabaseServerClient();
@@ -110,7 +126,7 @@ export async function createService(
   } = await supabase.auth.getUser();
 
   if (userError || !user) {
-    return { error: "ログイン状態を確認できませんでした。" };
+    return { formError: "ログイン状態を確認できませんでした。" };
   }
 
   const { error: insertError } = await supabase.from("services").insert({
@@ -119,7 +135,7 @@ export async function createService(
   });
 
   if (insertError) {
-    return { error: `登録に失敗しました: ${insertError.message}` };
+    return { formError: `登録に失敗しました: ${insertError.message}` };
   }
 
   revalidatePath("/services");
@@ -131,10 +147,10 @@ export async function updateService(
   _previousState: ServiceActionState,
   formData: FormData,
 ): Promise<ServiceActionState> {
-  const { payload, error } = parseServicePayload(formData);
+  const { payload, fieldErrors } = parseServicePayload(formData);
 
-  if (error || !payload) {
-    return { error };
+  if (fieldErrors || !payload) {
+    return { fieldErrors };
   }
 
   const supabase = await createSupabaseServerClient();
@@ -144,7 +160,7 @@ export async function updateService(
     .eq("id", id);
 
   if (updateError) {
-    return { error: `更新に失敗しました: ${updateError.message}` };
+    return { formError: `更新に失敗しました: ${updateError.message}` };
   }
 
   revalidatePath("/services");

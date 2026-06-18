@@ -1,14 +1,43 @@
 import Link from "next/link";
+import { ServiceFilters } from "@/components/services/service-filters";
 import { ServicesTable } from "@/components/services/services-table";
 import { PageHeader } from "@/components/ui/page-header";
+import {
+  isServiceStatus,
+  isServiceType,
+} from "@/lib/constants/services";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 
-export default async function ServicesPage() {
+type ServicesPageProps = {
+  searchParams: Promise<{
+    type?: string;
+    status?: string;
+  }>;
+};
+
+export default async function ServicesPage({
+  searchParams,
+}: ServicesPageProps) {
+  const params = await searchParams;
+  const selectedType = params.type && isServiceType(params.type) ? params.type : "";
+  const selectedStatus =
+    params.status && isServiceStatus(params.status) ? params.status : "";
+
   const supabase = await createSupabaseServerClient();
-  const { data: services, error } = await supabase
+  let query = supabase
     .from("services")
     .select("*")
     .order("updated_at", { ascending: false });
+
+  if (selectedType) {
+    query = query.eq("type", selectedType);
+  }
+
+  if (selectedStatus) {
+    query = query.eq("status", selectedStatus);
+  }
+
+  const { data: services, error } = await query;
 
   if (error) {
     throw new Error(`Failed to load services: ${error.message}`);
@@ -29,6 +58,10 @@ export default async function ServicesPage() {
         </Link>
       </div>
 
+      <ServiceFilters
+        selectedStatus={selectedStatus}
+        selectedType={selectedType}
+      />
       <ServicesTable services={services ?? []} />
     </>
   );
