@@ -1,4 +1,3 @@
-```sql
 -- =========================================================
 -- Career Tracker - Supabase Schema
 -- =========================================================
@@ -523,4 +522,3 @@ create policy "Users can delete own tasks"
 on public.tasks
 for delete
 using (auth.uid() = user_id);
-```
