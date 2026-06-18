@@ -30,6 +30,7 @@ export type Database = {
           status?: string;
         };
         Update: Partial<Database["public"]["Tables"]["services"]["Row"]>;
+        Relationships: [];
       };
       companies: {
         Row: {
@@ -51,6 +52,7 @@ export type Database = {
           name: string;
         };
         Update: Partial<Database["public"]["Tables"]["companies"]["Row"]>;
+        Relationships: [];
       };
       contacts: {
         Row: {
@@ -72,6 +74,7 @@ export type Database = {
           name: string;
         };
         Update: Partial<Database["public"]["Tables"]["contacts"]["Row"]>;
+        Relationships: [];
       };
       jobs: {
         Row: {
@@ -104,6 +107,7 @@ export type Database = {
           title: string;
         };
         Update: Partial<Database["public"]["Tables"]["jobs"]["Row"]>;
+        Relationships: [];
       };
       applications: {
         Row: {
@@ -126,6 +130,7 @@ export type Database = {
           job_id: string;
         };
         Update: Partial<Database["public"]["Tables"]["applications"]["Row"]>;
+        Relationships: [];
       };
       interviews: {
         Row: {
@@ -150,6 +155,7 @@ export type Database = {
           scheduled_at: string;
         };
         Update: Partial<Database["public"]["Tables"]["interviews"]["Row"]>;
+        Relationships: [];
       };
       tasks: {
         Row: {
@@ -171,6 +177,7 @@ export type Database = {
           due_date: string;
         };
         Update: Partial<Database["public"]["Tables"]["tasks"]["Row"]>;
+        Relationships: [];
       };
     };
     Views: Record<string, never>;
