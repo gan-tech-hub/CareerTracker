@@ -79,6 +79,7 @@ export function JobForm({
 }: JobFormProps) {
   const [state, formAction] = useActionState(action, {});
   const errors = state.fieldErrors ?? {};
+  const values = state.values;
 
   return (
     <form action={formAction} className="space-y-8" noValidate>
@@ -98,7 +99,7 @@ export function JobForm({
               aria-describedby={errors.title ? "title-error" : undefined}
               aria-invalid={Boolean(errors.title)}
               className={fieldClass(Boolean(errors.title))}
-              defaultValue={job?.title ?? ""}
+              defaultValue={values?.title ?? job?.title ?? ""}
               id="title"
               name="title"
               type="text"
@@ -121,7 +122,7 @@ export function JobForm({
               }
               aria-invalid={Boolean(errors.company_id)}
               className={`${fieldClass(Boolean(errors.company_id))} bg-white`}
-              defaultValue={job?.company_id ?? ""}
+              defaultValue={values?.company_id ?? job?.company_id ?? ""}
               id="company_id"
               name="company_id"
             >
@@ -150,7 +151,7 @@ export function JobForm({
               }
               aria-invalid={Boolean(errors.service_id)}
               className={`${fieldClass(Boolean(errors.service_id))} bg-white`}
-              defaultValue={job?.service_id ?? ""}
+              defaultValue={values?.service_id ?? job?.service_id ?? ""}
               id="service_id"
               name="service_id"
             >
@@ -174,7 +175,7 @@ export function JobForm({
               aria-describedby={errors.job_url ? "job-url-error" : undefined}
               aria-invalid={Boolean(errors.job_url)}
               className={fieldClass(Boolean(errors.job_url))}
-              defaultValue={job?.job_url ?? ""}
+              defaultValue={values?.job_url ?? job?.job_url ?? ""}
               id="job_url"
               name="job_url"
               placeholder="https://example.com/jobs/123"
@@ -191,7 +192,7 @@ export function JobForm({
             </label>
             <input
               className={fieldClass(false)}
-              defaultValue={job?.job_type ?? ""}
+              defaultValue={values?.job_type ?? job?.job_type ?? ""}
               id="job_type"
               name="job_type"
               placeholder="バックエンドエンジニアなど"
@@ -212,7 +213,11 @@ export function JobForm({
               }
               aria-invalid={Boolean(errors.employment_type)}
               className={`${fieldClass(Boolean(errors.employment_type))} bg-white`}
-              defaultValue={job?.employment_type ?? JOB_EMPLOYMENT_TYPES[0]}
+              defaultValue={
+                values?.employment_type ??
+                job?.employment_type ??
+                JOB_EMPLOYMENT_TYPES[0]
+              }
               id="employment_type"
               name="employment_type"
             >
@@ -244,7 +249,7 @@ export function JobForm({
               }
               aria-invalid={Boolean(errors.salary_min)}
               className={fieldClass(Boolean(errors.salary_min))}
-              defaultValue={job?.salary_min ?? ""}
+              defaultValue={values?.salary_min ?? job?.salary_min ?? ""}
               id="salary_min"
               inputMode="numeric"
               name="salary_min"
@@ -268,7 +273,7 @@ export function JobForm({
               }
               aria-invalid={Boolean(errors.salary_max)}
               className={fieldClass(Boolean(errors.salary_max))}
-              defaultValue={job?.salary_max ?? ""}
+              defaultValue={values?.salary_max ?? job?.salary_max ?? ""}
               id="salary_max"
               inputMode="numeric"
               name="salary_max"
@@ -285,7 +290,7 @@ export function JobForm({
             </label>
             <input
               className={fieldClass(false)}
-              defaultValue={job?.location ?? ""}
+              defaultValue={values?.location ?? job?.location ?? ""}
               id="location"
               name="location"
               placeholder="東京都、フルリモートなど"
@@ -306,7 +311,9 @@ export function JobForm({
               }
               aria-invalid={Boolean(errors.remote_type)}
               className={`${fieldClass(Boolean(errors.remote_type))} bg-white`}
-              defaultValue={job?.remote_type ?? JOB_REMOTE_TYPES[3]}
+              defaultValue={
+                values?.remote_type ?? job?.remote_type ?? JOB_REMOTE_TYPES[3]
+              }
               id="remote_type"
               name="remote_type"
             >
@@ -336,7 +343,11 @@ export function JobForm({
               }
               aria-invalid={Boolean(errors.side_job_allowed)}
               className={`${fieldClass(Boolean(errors.side_job_allowed))} bg-white`}
-              defaultValue={job?.side_job_allowed ?? JOB_SIDE_JOB_OPTIONS[3]}
+              defaultValue={
+                values?.side_job_allowed ??
+                job?.side_job_allowed ??
+                JOB_SIDE_JOB_OPTIONS[3]
+              }
               id="side_job_allowed"
               name="side_job_allowed"
             >
@@ -359,7 +370,7 @@ export function JobForm({
               aria-describedby={errors.priority ? "priority-error" : undefined}
               aria-invalid={Boolean(errors.priority)}
               className={`${fieldClass(Boolean(errors.priority))} bg-white`}
-              defaultValue={job?.priority ?? JOB_PRIORITIES[1]}
+              defaultValue={values?.priority ?? job?.priority ?? JOB_PRIORITIES[1]}
               id="priority"
               name="priority"
             >
@@ -387,7 +398,7 @@ export function JobForm({
             </label>
             <textarea
               className="mt-2 min-h-28 w-full rounded-md border border-border px-3 py-2 text-sm outline-none transition focus:border-ink"
-              defaultValue={job?.required_skills ?? ""}
+              defaultValue={values?.required_skills ?? job?.required_skills ?? ""}
               id="required_skills"
               name="required_skills"
             />
@@ -402,7 +413,9 @@ export function JobForm({
             </label>
             <textarea
               className="mt-2 min-h-28 w-full rounded-md border border-border px-3 py-2 text-sm outline-none transition focus:border-ink"
-              defaultValue={job?.preferred_skills ?? ""}
+              defaultValue={
+                values?.preferred_skills ?? job?.preferred_skills ?? ""
+              }
               id="preferred_skills"
               name="preferred_skills"
             />
@@ -417,7 +430,7 @@ export function JobForm({
             </label>
             <textarea
               className="mt-2 min-h-32 w-full rounded-md border border-border px-3 py-2 text-sm outline-none transition focus:border-ink"
-              defaultValue={job?.description ?? ""}
+              defaultValue={values?.description ?? job?.description ?? ""}
               id="description"
               name="description"
             />
@@ -432,7 +445,9 @@ export function JobForm({
             </label>
             <textarea
               className="mt-2 min-h-32 w-full rounded-md border border-border px-3 py-2 text-sm outline-none transition focus:border-ink"
-              defaultValue={job?.attractive_points ?? ""}
+              defaultValue={
+                values?.attractive_points ?? job?.attractive_points ?? ""
+              }
               id="attractive_points"
               name="attractive_points"
             />
@@ -444,7 +459,7 @@ export function JobForm({
             </label>
             <textarea
               className="mt-2 min-h-28 w-full rounded-md border border-border px-3 py-2 text-sm outline-none transition focus:border-ink"
-              defaultValue={job?.concerns ?? ""}
+              defaultValue={values?.concerns ?? job?.concerns ?? ""}
               id="concerns"
               name="concerns"
             />
@@ -456,7 +471,7 @@ export function JobForm({
             </label>
             <textarea
               className="mt-2 min-h-28 w-full rounded-md border border-border px-3 py-2 text-sm outline-none transition focus:border-ink"
-              defaultValue={job?.memo ?? ""}
+              defaultValue={values?.memo ?? job?.memo ?? ""}
               id="memo"
               name="memo"
             />

@@ -18,9 +18,20 @@ type ServiceFieldErrors = {
   registered_email?: string;
 };
 
+export type ServiceFormValues = {
+  name: string;
+  type: string;
+  login_url: string;
+  registered_email: string;
+  login_id: string;
+  status: string;
+  memo: string;
+};
+
 export type ServiceActionState = {
   formError?: string;
   fieldErrors?: ServiceFieldErrors;
+  values?: ServiceFormValues;
 };
 
 type ServicePayload = {
@@ -36,6 +47,18 @@ type ServicePayload = {
 function optionalText(formData: FormData, key: string) {
   const value = String(formData.get(key) ?? "").trim();
   return value === "" ? null : value;
+}
+
+function getServiceFormValues(formData: FormData): ServiceFormValues {
+  return {
+    name: String(formData.get("name") ?? "").trim(),
+    type: String(formData.get("type") ?? "").trim(),
+    login_url: String(formData.get("login_url") ?? "").trim(),
+    registered_email: String(formData.get("registered_email") ?? "").trim(),
+    login_id: String(formData.get("login_id") ?? "").trim(),
+    status: String(formData.get("status") ?? "").trim(),
+    memo: String(formData.get("memo") ?? "").trim(),
+  };
 }
 
 function validateUrl(value: string | null) {
@@ -62,23 +85,22 @@ function validateEmail(value: string | null) {
 function parseServicePayload(formData: FormData): {
   payload?: ServicePayload;
   fieldErrors?: ServiceFieldErrors;
+  values: ServiceFormValues;
 } {
-  const name = String(formData.get("name") ?? "").trim();
-  const type = String(formData.get("type") ?? "").trim();
-  const status = String(formData.get("status") ?? "").trim();
+  const values = getServiceFormValues(formData);
   const loginUrl = optionalText(formData, "login_url");
   const registeredEmail = optionalText(formData, "registered_email");
   const fieldErrors: ServiceFieldErrors = {};
 
-  if (!name) {
+  if (!values.name) {
     fieldErrors.name = "サービス名を入力してください。";
   }
 
-  if (!isServiceType(type)) {
+  if (!isServiceType(values.type)) {
     fieldErrors.type = "種別を選択してください。";
   }
 
-  if (!isServiceStatus(status)) {
+  if (!isServiceStatus(values.status)) {
     fieldErrors.status = "利用状況を選択してください。";
   }
 
@@ -93,19 +115,20 @@ function parseServicePayload(formData: FormData): {
   }
 
   if (Object.keys(fieldErrors).length > 0) {
-    return { fieldErrors };
+    return { fieldErrors, values };
   }
 
   return {
     payload: {
-      name,
-      type: type as ServiceType,
+      name: values.name,
+      type: values.type as ServiceType,
       login_url: loginUrl,
       registered_email: registeredEmail,
       login_id: optionalText(formData, "login_id"),
-      status: status as ServiceStatus,
+      status: values.status as ServiceStatus,
       memo: optionalText(formData, "memo"),
     },
+    values,
   };
 }
 
@@ -113,10 +136,10 @@ export async function createService(
   _previousState: ServiceActionState,
   formData: FormData,
 ): Promise<ServiceActionState> {
-  const { payload, fieldErrors } = parseServicePayload(formData);
+  const { payload, fieldErrors, values } = parseServicePayload(formData);
 
   if (fieldErrors || !payload) {
-    return { fieldErrors };
+    return { fieldErrors, values };
   }
 
   const supabase = await createSupabaseServerClient();
@@ -126,7 +149,7 @@ export async function createService(
   } = await supabase.auth.getUser();
 
   if (userError || !user) {
-    return { formError: "ログイン状態を確認できませんでした。" };
+    return { formError: "ログイン状態を確認できませんでした。", values };
   }
 
   const { error: insertError } = await supabase.from("services").insert({
@@ -135,7 +158,7 @@ export async function createService(
   });
 
   if (insertError) {
-    return { formError: `登録に失敗しました: ${insertError.message}` };
+    return { formError: `登録に失敗しました: ${insertError.message}`, values };
   }
 
   revalidatePath("/services");
@@ -147,10 +170,10 @@ export async function updateService(
   _previousState: ServiceActionState,
   formData: FormData,
 ): Promise<ServiceActionState> {
-  const { payload, fieldErrors } = parseServicePayload(formData);
+  const { payload, fieldErrors, values } = parseServicePayload(formData);
 
   if (fieldErrors || !payload) {
-    return { fieldErrors };
+    return { fieldErrors, values };
   }
 
   const supabase = await createSupabaseServerClient();
@@ -160,7 +183,7 @@ export async function updateService(
     .eq("id", id);
 
   if (updateError) {
-    return { formError: `更新に失敗しました: ${updateError.message}` };
+    return { formError: `更新に失敗しました: ${updateError.message}`, values };
   }
 
   revalidatePath("/services");

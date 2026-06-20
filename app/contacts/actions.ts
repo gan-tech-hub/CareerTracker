@@ -13,9 +13,21 @@ type ContactFieldErrors = {
   company_id?: string;
 };
 
+export type ContactFormValues = {
+  name: string;
+  organization: string;
+  role: string;
+  email: string;
+  phone: string;
+  service_id: string;
+  company_id: string;
+  memo: string;
+};
+
 export type ContactActionState = {
   formError?: string;
   fieldErrors?: ContactFieldErrors;
+  values?: ContactFormValues;
 };
 
 type ContactPayload = {
@@ -34,6 +46,19 @@ function optionalText(formData: FormData, key: string) {
   return value === "" ? null : value;
 }
 
+function getContactFormValues(formData: FormData): ContactFormValues {
+  return {
+    name: String(formData.get("name") ?? "").trim(),
+    organization: String(formData.get("organization") ?? "").trim(),
+    role: String(formData.get("role") ?? "").trim(),
+    email: String(formData.get("email") ?? "").trim(),
+    phone: String(formData.get("phone") ?? "").trim(),
+    service_id: String(formData.get("service_id") ?? "").trim(),
+    company_id: String(formData.get("company_id") ?? "").trim(),
+    memo: String(formData.get("memo") ?? "").trim(),
+  };
+}
+
 function validateEmail(value: string | null) {
   if (!value) {
     return true;
@@ -45,17 +70,17 @@ function validateEmail(value: string | null) {
 function parseContactPayload(formData: FormData): {
   payload?: ContactPayload;
   fieldErrors?: ContactFieldErrors;
+  values: ContactFormValues;
 } {
-  const name = String(formData.get("name") ?? "").trim();
-  const role = String(formData.get("role") ?? "").trim();
+  const values = getContactFormValues(formData);
   const email = optionalText(formData, "email");
   const fieldErrors: ContactFieldErrors = {};
 
-  if (!name) {
+  if (!values.name) {
     fieldErrors.name = "氏名を入力してください。";
   }
 
-  if (!isContactRole(role)) {
+  if (!isContactRole(values.role)) {
     fieldErrors.role = "役割を選択してください。";
   }
 
@@ -64,20 +89,21 @@ function parseContactPayload(formData: FormData): {
   }
 
   if (Object.keys(fieldErrors).length > 0) {
-    return { fieldErrors };
+    return { fieldErrors, values };
   }
 
   return {
     payload: {
-      name,
+      name: values.name,
       organization: optionalText(formData, "organization"),
-      role: role as ContactRole,
+      role: values.role as ContactRole,
       email,
       phone: optionalText(formData, "phone"),
       service_id: optionalText(formData, "service_id"),
       company_id: optionalText(formData, "company_id"),
       memo: optionalText(formData, "memo"),
     },
+    values,
   };
 }
 
@@ -121,10 +147,10 @@ export async function createContact(
   _previousState: ContactActionState,
   formData: FormData,
 ): Promise<ContactActionState> {
-  const { payload, fieldErrors } = parseContactPayload(formData);
+  const { payload, fieldErrors, values } = parseContactPayload(formData);
 
   if (fieldErrors || !payload) {
-    return { fieldErrors };
+    return { fieldErrors, values };
   }
 
   const supabase = await createSupabaseServerClient();
@@ -134,7 +160,7 @@ export async function createContact(
   } = await supabase.auth.getUser();
 
   if (userError || !user) {
-    return { formError: "ログイン状態を確認できませんでした。" };
+    return { formError: "ログイン状態を確認できませんでした。", values };
   }
 
   const relatedErrors = await validateRelatedOwnership(
@@ -144,7 +170,7 @@ export async function createContact(
   );
 
   if (relatedErrors) {
-    return { fieldErrors: relatedErrors };
+    return { fieldErrors: relatedErrors, values };
   }
 
   const { error: insertError } = await supabase.from("contacts").insert({
@@ -153,7 +179,7 @@ export async function createContact(
   });
 
   if (insertError) {
-    return { formError: `登録に失敗しました: ${insertError.message}` };
+    return { formError: `登録に失敗しました: ${insertError.message}`, values };
   }
 
   revalidatePath("/contacts");
@@ -165,10 +191,10 @@ export async function updateContact(
   _previousState: ContactActionState,
   formData: FormData,
 ): Promise<ContactActionState> {
-  const { payload, fieldErrors } = parseContactPayload(formData);
+  const { payload, fieldErrors, values } = parseContactPayload(formData);
 
   if (fieldErrors || !payload) {
-    return { fieldErrors };
+    return { fieldErrors, values };
   }
 
   const supabase = await createSupabaseServerClient();
@@ -178,7 +204,7 @@ export async function updateContact(
   } = await supabase.auth.getUser();
 
   if (userError || !user) {
-    return { formError: "ログイン状態を確認できませんでした。" };
+    return { formError: "ログイン状態を確認できませんでした。", values };
   }
 
   const relatedErrors = await validateRelatedOwnership(
@@ -188,7 +214,7 @@ export async function updateContact(
   );
 
   if (relatedErrors) {
-    return { fieldErrors: relatedErrors };
+    return { fieldErrors: relatedErrors, values };
   }
 
   const { error: updateError } = await supabase
@@ -197,7 +223,7 @@ export async function updateContact(
     .eq("id", id);
 
   if (updateError) {
-    return { formError: `更新に失敗しました: ${updateError.message}` };
+    return { formError: `更新に失敗しました: ${updateError.message}`, values };
   }
 
   revalidatePath("/contacts");
