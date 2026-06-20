@@ -52,6 +52,7 @@ export function CompanyForm({
 }: CompanyFormProps) {
   const [state, formAction] = useActionState(action, {});
   const errors = state.fieldErrors ?? {};
+  const values = state.values;
 
   return (
     <form action={formAction} className="space-y-6" noValidate>
@@ -70,7 +71,7 @@ export function CompanyForm({
             aria-describedby={errors.name ? "name-error" : undefined}
             aria-invalid={Boolean(errors.name)}
             className={fieldClass(Boolean(errors.name))}
-            defaultValue={company?.name ?? ""}
+            defaultValue={values?.name ?? company?.name ?? ""}
             id="name"
             name="name"
             type="text"
@@ -93,7 +94,11 @@ export function CompanyForm({
             }
             aria-invalid={Boolean(errors.interest_level)}
             className={`${fieldClass(Boolean(errors.interest_level))} bg-white`}
-            defaultValue={company?.interest_level ?? COMPANY_INTEREST_LEVELS[1]}
+            defaultValue={
+              values?.interest_level ??
+              company?.interest_level ??
+              COMPANY_INTEREST_LEVELS[1]
+            }
             id="interest_level"
             name="interest_level"
           >
@@ -114,7 +119,7 @@ export function CompanyForm({
           </label>
           <input
             className={fieldClass(false)}
-            defaultValue={company?.industry ?? ""}
+            defaultValue={values?.industry ?? company?.industry ?? ""}
             id="industry"
             name="industry"
             placeholder="SaaS、SIer、製造業など"
@@ -128,7 +133,7 @@ export function CompanyForm({
           </label>
           <input
             className={fieldClass(false)}
-            defaultValue={company?.location ?? ""}
+            defaultValue={values?.location ?? company?.location ?? ""}
             id="location"
             name="location"
             placeholder="東京都、フルリモートなど"
@@ -149,7 +154,7 @@ export function CompanyForm({
             }
             aria-invalid={Boolean(errors.corporate_url)}
             className={fieldClass(Boolean(errors.corporate_url))}
-            defaultValue={company?.corporate_url ?? ""}
+            defaultValue={values?.corporate_url ?? company?.corporate_url ?? ""}
             id="corporate_url"
             name="corporate_url"
             placeholder="https://example.com"
@@ -173,7 +178,9 @@ export function CompanyForm({
             }
             aria-invalid={Boolean(errors.recruitment_url)}
             className={fieldClass(Boolean(errors.recruitment_url))}
-            defaultValue={company?.recruitment_url ?? ""}
+            defaultValue={
+              values?.recruitment_url ?? company?.recruitment_url ?? ""
+            }
             id="recruitment_url"
             name="recruitment_url"
             placeholder="https://example.com/recruit"
@@ -191,7 +198,7 @@ export function CompanyForm({
         </label>
         <textarea
           className="mt-2 min-h-28 w-full rounded-md border border-border px-3 py-2 text-sm outline-none transition focus:border-ink"
-          defaultValue={company?.concerns ?? ""}
+          defaultValue={values?.concerns ?? company?.concerns ?? ""}
           id="concerns"
           name="concerns"
         />
@@ -203,7 +210,7 @@ export function CompanyForm({
         </label>
         <textarea
           className="mt-2 min-h-32 w-full rounded-md border border-border px-3 py-2 text-sm outline-none transition focus:border-ink"
-          defaultValue={company?.memo ?? ""}
+          defaultValue={values?.memo ?? company?.memo ?? ""}
           id="memo"
           name="memo"
         />

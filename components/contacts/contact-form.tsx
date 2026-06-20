@@ -61,6 +61,7 @@ export function ContactForm({
 }: ContactFormProps) {
   const [state, formAction] = useActionState(action, {});
   const errors = state.fieldErrors ?? {};
+  const values = state.values;
 
   return (
     <form action={formAction} className="space-y-6" noValidate>
@@ -79,7 +80,7 @@ export function ContactForm({
             aria-describedby={errors.name ? "name-error" : undefined}
             aria-invalid={Boolean(errors.name)}
             className={fieldClass(Boolean(errors.name))}
-            defaultValue={contact?.name ?? ""}
+            defaultValue={values?.name ?? contact?.name ?? ""}
             id="name"
             name="name"
             type="text"
@@ -97,7 +98,7 @@ export function ContactForm({
             aria-describedby={errors.role ? "role-error" : undefined}
             aria-invalid={Boolean(errors.role)}
             className={`${fieldClass(Boolean(errors.role))} bg-white`}
-            defaultValue={contact?.role ?? CONTACT_ROLES[0]}
+            defaultValue={values?.role ?? contact?.role ?? CONTACT_ROLES[0]}
             id="role"
             name="role"
           >
@@ -121,7 +122,7 @@ export function ContactForm({
           </label>
           <input
             className={fieldClass(false)}
-            defaultValue={contact?.organization ?? ""}
+            defaultValue={values?.organization ?? contact?.organization ?? ""}
             id="organization"
             name="organization"
             placeholder="企業名、部署名、エージェント名など"
@@ -137,7 +138,7 @@ export function ContactForm({
             aria-describedby={errors.email ? "email-error" : undefined}
             aria-invalid={Boolean(errors.email)}
             className={fieldClass(Boolean(errors.email))}
-            defaultValue={contact?.email ?? ""}
+            defaultValue={values?.email ?? contact?.email ?? ""}
             id="email"
             name="email"
             type="text"
@@ -153,7 +154,7 @@ export function ContactForm({
           </label>
           <input
             className={fieldClass(false)}
-            defaultValue={contact?.phone ?? ""}
+            defaultValue={values?.phone ?? contact?.phone ?? ""}
             id="phone"
             name="phone"
             type="text"
@@ -170,7 +171,7 @@ export function ContactForm({
             }
             aria-invalid={Boolean(errors.service_id)}
             className={`${fieldClass(Boolean(errors.service_id))} bg-white`}
-            defaultValue={contact?.service_id ?? ""}
+            defaultValue={values?.service_id ?? contact?.service_id ?? ""}
             id="service_id"
             name="service_id"
           >
@@ -196,7 +197,7 @@ export function ContactForm({
             }
             aria-invalid={Boolean(errors.company_id)}
             className={`${fieldClass(Boolean(errors.company_id))} bg-white`}
-            defaultValue={contact?.company_id ?? ""}
+            defaultValue={values?.company_id ?? contact?.company_id ?? ""}
             id="company_id"
             name="company_id"
           >
@@ -219,7 +220,7 @@ export function ContactForm({
         </label>
         <textarea
           className="mt-2 min-h-32 w-full rounded-md border border-border px-3 py-2 text-sm outline-none transition focus:border-ink"
-          defaultValue={contact?.memo ?? ""}
+          defaultValue={values?.memo ?? contact?.memo ?? ""}
           id="memo"
           name="memo"
         />

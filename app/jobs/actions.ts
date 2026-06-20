@@ -27,9 +27,31 @@ type JobFieldErrors = {
   priority?: string;
 };
 
+export type JobFormValues = {
+  company_id: string;
+  service_id: string;
+  title: string;
+  job_url: string;
+  job_type: string;
+  employment_type: string;
+  salary_min: string;
+  salary_max: string;
+  location: string;
+  remote_type: string;
+  side_job_allowed: string;
+  required_skills: string;
+  preferred_skills: string;
+  description: string;
+  attractive_points: string;
+  concerns: string;
+  priority: string;
+  memo: string;
+};
+
 export type JobActionState = {
   formError?: string;
   fieldErrors?: JobFieldErrors;
+  values?: JobFormValues;
 };
 
 type JobPayload = {
@@ -60,6 +82,29 @@ type OptionalIntegerResult =
 function optionalText(formData: FormData, key: string) {
   const value = String(formData.get(key) ?? "").trim();
   return value === "" ? null : value;
+}
+
+function getJobFormValues(formData: FormData): JobFormValues {
+  return {
+    company_id: String(formData.get("company_id") ?? "").trim(),
+    service_id: String(formData.get("service_id") ?? "").trim(),
+    title: String(formData.get("title") ?? "").trim(),
+    job_url: String(formData.get("job_url") ?? "").trim(),
+    job_type: String(formData.get("job_type") ?? "").trim(),
+    employment_type: String(formData.get("employment_type") ?? "").trim(),
+    salary_min: String(formData.get("salary_min") ?? "").trim(),
+    salary_max: String(formData.get("salary_max") ?? "").trim(),
+    location: String(formData.get("location") ?? "").trim(),
+    remote_type: String(formData.get("remote_type") ?? "").trim(),
+    side_job_allowed: String(formData.get("side_job_allowed") ?? "").trim(),
+    required_skills: String(formData.get("required_skills") ?? "").trim(),
+    preferred_skills: String(formData.get("preferred_skills") ?? "").trim(),
+    description: String(formData.get("description") ?? "").trim(),
+    attractive_points: String(formData.get("attractive_points") ?? "").trim(),
+    concerns: String(formData.get("concerns") ?? "").trim(),
+    priority: String(formData.get("priority") ?? "").trim(),
+    memo: String(formData.get("memo") ?? "").trim(),
+  };
 }
 
 function optionalInteger(
@@ -94,40 +139,36 @@ function validateUrl(value: string | null) {
 function parseJobPayload(formData: FormData): {
   payload?: JobPayload;
   fieldErrors?: JobFieldErrors;
+  values: JobFormValues;
 } {
-  const title = String(formData.get("title") ?? "").trim();
-  const companyId = String(formData.get("company_id") ?? "").trim();
+  const values = getJobFormValues(formData);
   const serviceId = optionalText(formData, "service_id");
   const jobUrl = optionalText(formData, "job_url");
-  const employmentType = String(formData.get("employment_type") ?? "").trim();
-  const remoteType = String(formData.get("remote_type") ?? "").trim();
-  const sideJobAllowed = String(formData.get("side_job_allowed") ?? "").trim();
-  const priority = String(formData.get("priority") ?? "").trim();
   const salaryMin = optionalInteger(formData, "salary_min");
   const salaryMax = optionalInteger(formData, "salary_max");
   const fieldErrors: JobFieldErrors = {};
 
-  if (!title) {
+  if (!values.title) {
     fieldErrors.title = "求人タイトルを入力してください。";
   }
 
-  if (!companyId) {
+  if (!values.company_id) {
     fieldErrors.company_id = "会社を選択してください。";
   }
 
-  if (!isJobEmploymentType(employmentType)) {
+  if (!isJobEmploymentType(values.employment_type)) {
     fieldErrors.employment_type = "雇用形態を選択してください。";
   }
 
-  if (!isJobRemoteType(remoteType)) {
+  if (!isJobRemoteType(values.remote_type)) {
     fieldErrors.remote_type = "リモート可否を選択してください。";
   }
 
-  if (!isJobSideJobAllowed(sideJobAllowed)) {
+  if (!isJobSideJobAllowed(values.side_job_allowed)) {
     fieldErrors.side_job_allowed = "副業可否を選択してください。";
   }
 
-  if (!isJobPriority(priority)) {
+  if (!isJobPriority(values.priority)) {
     fieldErrors.priority = "優先度を選択してください。";
   }
 
@@ -156,30 +197,31 @@ function parseJobPayload(formData: FormData): {
   }
 
   if (Object.keys(fieldErrors).length > 0) {
-    return { fieldErrors };
+    return { fieldErrors, values };
   }
 
   return {
     payload: {
-      company_id: companyId,
+      company_id: values.company_id,
       service_id: serviceId,
-      title,
+      title: values.title,
       job_url: jobUrl,
       job_type: optionalText(formData, "job_type"),
-      employment_type: employmentType as JobEmploymentType,
+      employment_type: values.employment_type as JobEmploymentType,
       salary_min: salaryMin.type === "success" ? salaryMin.value : null,
       salary_max: salaryMax.type === "success" ? salaryMax.value : null,
       location: optionalText(formData, "location"),
-      remote_type: remoteType as JobRemoteType,
-      side_job_allowed: sideJobAllowed as JobSideJobAllowed,
+      remote_type: values.remote_type as JobRemoteType,
+      side_job_allowed: values.side_job_allowed as JobSideJobAllowed,
       required_skills: optionalText(formData, "required_skills"),
       preferred_skills: optionalText(formData, "preferred_skills"),
       description: optionalText(formData, "description"),
       attractive_points: optionalText(formData, "attractive_points"),
       concerns: optionalText(formData, "concerns"),
-      priority: priority as JobPriority,
+      priority: values.priority as JobPriority,
       memo: optionalText(formData, "memo"),
     },
+    values,
   };
 }
 
@@ -221,10 +263,10 @@ export async function createJob(
   _previousState: JobActionState,
   formData: FormData,
 ): Promise<JobActionState> {
-  const { payload, fieldErrors } = parseJobPayload(formData);
+  const { payload, fieldErrors, values } = parseJobPayload(formData);
 
   if (fieldErrors || !payload) {
-    return { fieldErrors };
+    return { fieldErrors, values };
   }
 
   const supabase = await createSupabaseServerClient();
@@ -234,7 +276,7 @@ export async function createJob(
   } = await supabase.auth.getUser();
 
   if (userError || !user) {
-    return { formError: "ログイン状態を確認できませんでした。" };
+    return { formError: "ログイン状態を確認できませんでした。", values };
   }
 
   const relatedErrors = await validateRelatedOwnership(
@@ -244,7 +286,7 @@ export async function createJob(
   );
 
   if (relatedErrors) {
-    return { fieldErrors: relatedErrors };
+    return { fieldErrors: relatedErrors, values };
   }
 
   const { error: insertError } = await supabase.from("jobs").insert({
@@ -253,7 +295,7 @@ export async function createJob(
   });
 
   if (insertError) {
-    return { formError: `登録に失敗しました: ${insertError.message}` };
+    return { formError: `登録に失敗しました: ${insertError.message}`, values };
   }
 
   revalidatePath("/jobs");
@@ -265,10 +307,10 @@ export async function updateJob(
   _previousState: JobActionState,
   formData: FormData,
 ): Promise<JobActionState> {
-  const { payload, fieldErrors } = parseJobPayload(formData);
+  const { payload, fieldErrors, values } = parseJobPayload(formData);
 
   if (fieldErrors || !payload) {
-    return { fieldErrors };
+    return { fieldErrors, values };
   }
 
   const supabase = await createSupabaseServerClient();
@@ -278,7 +320,7 @@ export async function updateJob(
   } = await supabase.auth.getUser();
 
   if (userError || !user) {
-    return { formError: "ログイン状態を確認できませんでした。" };
+    return { formError: "ログイン状態を確認できませんでした。", values };
   }
 
   const relatedErrors = await validateRelatedOwnership(
@@ -288,7 +330,7 @@ export async function updateJob(
   );
 
   if (relatedErrors) {
-    return { fieldErrors: relatedErrors };
+    return { fieldErrors: relatedErrors, values };
   }
 
   const { error: updateError } = await supabase
@@ -297,7 +339,7 @@ export async function updateJob(
     .eq("id", id);
 
   if (updateError) {
-    return { formError: `更新に失敗しました: ${updateError.message}` };
+    return { formError: `更新に失敗しました: ${updateError.message}`, values };
   }
 
   revalidatePath("/jobs");

@@ -52,6 +52,7 @@ export function ServiceForm({
 }: ServiceFormProps) {
   const [state, formAction] = useActionState(action, {});
   const errors = state.fieldErrors ?? {};
+  const values = state.values;
 
   return (
     <form action={formAction} className="space-y-6" noValidate>
@@ -70,7 +71,7 @@ export function ServiceForm({
             aria-describedby={errors.name ? "name-error" : undefined}
             aria-invalid={Boolean(errors.name)}
             className={fieldClass(Boolean(errors.name))}
-            defaultValue={service?.name ?? ""}
+            defaultValue={values?.name ?? service?.name ?? ""}
             id="name"
             name="name"
             type="text"
@@ -88,7 +89,7 @@ export function ServiceForm({
             aria-describedby={errors.type ? "type-error" : undefined}
             aria-invalid={Boolean(errors.type)}
             className={`${fieldClass(Boolean(errors.type))} bg-white`}
-            defaultValue={service?.type ?? SERVICE_TYPES[0]}
+            defaultValue={values?.type ?? service?.type ?? SERVICE_TYPES[0]}
             id="type"
             name="type"
           >
@@ -111,7 +112,9 @@ export function ServiceForm({
             aria-describedby={errors.status ? "status-error" : undefined}
             aria-invalid={Boolean(errors.status)}
             className={`${fieldClass(Boolean(errors.status))} bg-white`}
-            defaultValue={service?.status ?? SERVICE_STATUSES[0]}
+            defaultValue={
+              values?.status ?? service?.status ?? SERVICE_STATUSES[0]
+            }
             id="status"
             name="status"
           >
@@ -134,7 +137,7 @@ export function ServiceForm({
             aria-describedby={errors.login_url ? "login-url-error" : undefined}
             aria-invalid={Boolean(errors.login_url)}
             className={fieldClass(Boolean(errors.login_url))}
-            defaultValue={service?.login_url ?? ""}
+            defaultValue={values?.login_url ?? service?.login_url ?? ""}
             id="login_url"
             name="login_url"
             placeholder="https://example.com"
@@ -158,7 +161,9 @@ export function ServiceForm({
             }
             aria-invalid={Boolean(errors.registered_email)}
             className={fieldClass(Boolean(errors.registered_email))}
-            defaultValue={service?.registered_email ?? ""}
+            defaultValue={
+              values?.registered_email ?? service?.registered_email ?? ""
+            }
             id="registered_email"
             name="registered_email"
             type="text"
@@ -174,7 +179,7 @@ export function ServiceForm({
           </label>
           <input
             className={fieldClass(false)}
-            defaultValue={service?.login_id ?? ""}
+            defaultValue={values?.login_id ?? service?.login_id ?? ""}
             id="login_id"
             name="login_id"
             type="text"
@@ -188,7 +193,7 @@ export function ServiceForm({
         </label>
         <textarea
           className="mt-2 min-h-32 w-full rounded-md border border-border px-3 py-2 text-sm outline-none transition focus:border-ink"
-          defaultValue={service?.memo ?? ""}
+          defaultValue={values?.memo ?? service?.memo ?? ""}
           id="memo"
           name="memo"
         />

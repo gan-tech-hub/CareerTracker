@@ -15,9 +15,21 @@ type CompanyFieldErrors = {
   recruitment_url?: string;
 };
 
+export type CompanyFormValues = {
+  name: string;
+  industry: string;
+  location: string;
+  corporate_url: string;
+  recruitment_url: string;
+  interest_level: string;
+  concerns: string;
+  memo: string;
+};
+
 export type CompanyActionState = {
   formError?: string;
   fieldErrors?: CompanyFieldErrors;
+  values?: CompanyFormValues;
 };
 
 type CompanyPayload = {
@@ -36,6 +48,19 @@ function optionalText(formData: FormData, key: string) {
   return value === "" ? null : value;
 }
 
+function getCompanyFormValues(formData: FormData): CompanyFormValues {
+  return {
+    name: String(formData.get("name") ?? "").trim(),
+    industry: String(formData.get("industry") ?? "").trim(),
+    location: String(formData.get("location") ?? "").trim(),
+    corporate_url: String(formData.get("corporate_url") ?? "").trim(),
+    recruitment_url: String(formData.get("recruitment_url") ?? "").trim(),
+    interest_level: String(formData.get("interest_level") ?? "").trim(),
+    concerns: String(formData.get("concerns") ?? "").trim(),
+    memo: String(formData.get("memo") ?? "").trim(),
+  };
+}
+
 function validateUrl(value: string | null) {
   if (!value) {
     return true;
@@ -52,18 +77,18 @@ function validateUrl(value: string | null) {
 function parseCompanyPayload(formData: FormData): {
   payload?: CompanyPayload;
   fieldErrors?: CompanyFieldErrors;
+  values: CompanyFormValues;
 } {
-  const name = String(formData.get("name") ?? "").trim();
-  const interestLevel = String(formData.get("interest_level") ?? "").trim();
+  const values = getCompanyFormValues(formData);
   const corporateUrl = optionalText(formData, "corporate_url");
   const recruitmentUrl = optionalText(formData, "recruitment_url");
   const fieldErrors: CompanyFieldErrors = {};
 
-  if (!name) {
+  if (!values.name) {
     fieldErrors.name = "会社名を入力してください。";
   }
 
-  if (!isCompanyInterestLevel(interestLevel)) {
+  if (!isCompanyInterestLevel(values.interest_level)) {
     fieldErrors.interest_level = "関心度を選択してください。";
   }
 
@@ -78,20 +103,21 @@ function parseCompanyPayload(formData: FormData): {
   }
 
   if (Object.keys(fieldErrors).length > 0) {
-    return { fieldErrors };
+    return { fieldErrors, values };
   }
 
   return {
     payload: {
-      name,
+      name: values.name,
       industry: optionalText(formData, "industry"),
       location: optionalText(formData, "location"),
       corporate_url: corporateUrl,
       recruitment_url: recruitmentUrl,
-      interest_level: interestLevel as CompanyInterestLevel,
+      interest_level: values.interest_level as CompanyInterestLevel,
       concerns: optionalText(formData, "concerns"),
       memo: optionalText(formData, "memo"),
     },
+    values,
   };
 }
 
@@ -99,10 +125,10 @@ export async function createCompany(
   _previousState: CompanyActionState,
   formData: FormData,
 ): Promise<CompanyActionState> {
-  const { payload, fieldErrors } = parseCompanyPayload(formData);
+  const { payload, fieldErrors, values } = parseCompanyPayload(formData);
 
   if (fieldErrors || !payload) {
-    return { fieldErrors };
+    return { fieldErrors, values };
   }
 
   const supabase = await createSupabaseServerClient();
@@ -112,7 +138,7 @@ export async function createCompany(
   } = await supabase.auth.getUser();
 
   if (userError || !user) {
-    return { formError: "ログイン状態を確認できませんでした。" };
+    return { formError: "ログイン状態を確認できませんでした。", values };
   }
 
   const { error: insertError } = await supabase.from("companies").insert({
@@ -121,7 +147,7 @@ export async function createCompany(
   });
 
   if (insertError) {
-    return { formError: `登録に失敗しました: ${insertError.message}` };
+    return { formError: `登録に失敗しました: ${insertError.message}`, values };
   }
 
   revalidatePath("/companies");
@@ -133,10 +159,10 @@ export async function updateCompany(
   _previousState: CompanyActionState,
   formData: FormData,
 ): Promise<CompanyActionState> {
-  const { payload, fieldErrors } = parseCompanyPayload(formData);
+  const { payload, fieldErrors, values } = parseCompanyPayload(formData);
 
   if (fieldErrors || !payload) {
-    return { fieldErrors };
+    return { fieldErrors, values };
   }
 
   const supabase = await createSupabaseServerClient();
@@ -146,7 +172,7 @@ export async function updateCompany(
     .eq("id", id);
 
   if (updateError) {
-    return { formError: `更新に失敗しました: ${updateError.message}` };
+    return { formError: `更新に失敗しました: ${updateError.message}`, values };
   }
 
   revalidatePath("/companies");
