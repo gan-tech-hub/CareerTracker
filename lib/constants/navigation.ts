@@ -5,7 +5,6 @@ export const navigationItems = [
   { href: "/contacts", label: "担当者" },
   { href: "/jobs", label: "求人" },
   { href: "/applications", label: "応募・選考" },
-  { href: "/applications/kanban", label: "選考カンバン" },
   { href: "/interviews", label: "面談予定" },
   { href: "/tasks", label: "タスク・期限" },
 ] as const;

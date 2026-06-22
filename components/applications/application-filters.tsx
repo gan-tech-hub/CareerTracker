@@ -7,6 +7,8 @@ import {
 import type { ApplicationSelectOption } from "./application-types";
 
 type ApplicationFiltersProps = {
+  actionPath?: string;
+  clearHref?: string;
   companies: ApplicationSelectOption[];
   q?: string;
   selectedCompanyId?: string;
@@ -18,6 +20,8 @@ type ApplicationFiltersProps = {
 };
 
 export function ApplicationFilters({
+  actionPath = "/applications",
+  clearHref = actionPath,
   companies,
   q = "",
   selectedCompanyId = "",
@@ -29,7 +33,7 @@ export function ApplicationFilters({
 }: ApplicationFiltersProps) {
   return (
     <form
-      action="/applications"
+      action={actionPath}
       className="mb-5 space-y-4 rounded-md border border-border bg-white p-4 shadow-panel"
       method="get"
     >
@@ -170,7 +174,7 @@ export function ApplicationFilters({
 
         <Link
           className="rounded-md border border-border bg-white px-4 py-2 text-sm font-medium text-ink transition hover:bg-surface"
-          href="/applications"
+          href={clearHref}
         >
           クリア
         </Link>

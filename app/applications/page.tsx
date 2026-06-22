@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { ApplicationFilters } from "@/components/applications/application-filters";
+import { ApplicationViewSwitcher } from "@/components/applications/application-view-switcher";
 import { ApplicationsTable } from "@/components/applications/applications-table";
 import type { ApplicationWithRelations } from "@/components/applications/application-types";
 import { PageHeader } from "@/components/ui/page-header";
@@ -165,12 +166,7 @@ export default async function ApplicationsPage({
           title="応募・選考"
         />
         <div className="flex items-center gap-2">
-          <Link
-            className="rounded-md border border-border bg-white px-4 py-2 text-sm font-medium text-ink transition hover:bg-surface"
-            href="/applications/kanban"
-          >
-            カンバン
-          </Link>
+          <ApplicationViewSwitcher currentView="list" />
           <Link
             className="rounded-md bg-ink px-4 py-2 text-sm font-semibold text-white transition hover:bg-slate-700"
             href="/applications/new"
