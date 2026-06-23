@@ -1,6 +1,10 @@
 import Link from "next/link";
 import { ApplicationFilters } from "@/components/applications/application-filters";
 import { ApplicationKanbanBoard } from "@/components/applications/application-kanban-board";
+import type {
+  RelatedKanbanInterview,
+  RelatedKanbanTask,
+} from "@/components/applications/application-kanban-card";
 import type { ApplicationWithRelations } from "@/components/applications/application-types";
 import { ApplicationViewSwitcher } from "@/components/applications/application-view-switcher";
 import { PageHeader } from "@/components/ui/page-header";
@@ -53,6 +57,20 @@ function sortApplications(
       new Date(b.updated_at).getTime() - new Date(a.updated_at).getTime()
     );
   });
+}
+
+function groupByApplicationId<
+  T extends { application_id: string | null },
+>(items: T[]) {
+  return items.reduce<Record<string, T[]>>((grouped, item) => {
+    if (!item.application_id) {
+      return grouped;
+    }
+
+    grouped[item.application_id] = grouped[item.application_id] ?? [];
+    grouped[item.application_id].push(item);
+    return grouped;
+  }, {});
 }
 
 export default async function ApplicationKanbanPage({
@@ -122,6 +140,8 @@ export default async function ApplicationKanbanPage({
   }
 
   let applications: ApplicationWithRelations[] = [];
+  let interviewsByApplicationId: Record<string, RelatedKanbanInterview[]> = {};
+  let tasksByApplicationId: Record<string, RelatedKanbanTask[]> = {};
 
   if (!filteredJobIds || filteredJobIds.length > 0) {
     let query = supabase
@@ -177,6 +197,45 @@ export default async function ApplicationKanbanPage({
     }
 
     applications = sortApplications((data ?? []) as ApplicationWithRelations[]);
+
+    const applicationIds = applications.map((application) => application.id);
+
+    if (applicationIds.length > 0) {
+      const nowIso = new Date().toISOString();
+      const [interviewsResult, tasksResult] = await Promise.all([
+        supabase
+          .from("interviews")
+          .select("id, application_id, type, scheduled_at")
+          .in("application_id", applicationIds)
+          .gte("scheduled_at", nowIso)
+          .order("scheduled_at", { ascending: true }),
+        supabase
+          .from("tasks")
+          .select("id, application_id, due_date, is_completed")
+          .in("application_id", applicationIds)
+          .eq("is_completed", false)
+          .order("due_date", { ascending: true }),
+      ]);
+
+      if (interviewsResult.error) {
+        throw new Error(
+          `Failed to load kanban interviews: ${interviewsResult.error.message}`,
+        );
+      }
+
+      if (tasksResult.error) {
+        throw new Error(
+          `Failed to load kanban tasks: ${tasksResult.error.message}`,
+        );
+      }
+
+      interviewsByApplicationId = groupByApplicationId(
+        (interviewsResult.data ?? []) as RelatedKanbanInterview[],
+      );
+      tasksByApplicationId = groupByApplicationId(
+        (tasksResult.data ?? []) as RelatedKanbanTask[],
+      );
+    }
   }
 
   return (
@@ -210,7 +269,11 @@ export default async function ApplicationKanbanPage({
         services={servicesResult.data ?? []}
       />
 
-      <ApplicationKanbanBoard applications={applications} />
+      <ApplicationKanbanBoard
+        applications={applications}
+        interviewsByApplicationId={interviewsByApplicationId}
+        tasksByApplicationId={tasksByApplicationId}
+      />
     </>
   );
 }

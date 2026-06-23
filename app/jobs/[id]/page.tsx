@@ -2,6 +2,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { deleteJob } from "@/app/jobs/actions";
 import { DeleteJobButton } from "@/components/jobs/delete-job-button";
+import { JobApplicationRelated } from "@/components/jobs/job-application-related";
 import { JobDetail } from "@/components/jobs/job-detail";
 import type { JobWithRelations } from "@/components/jobs/job-types";
 import { Card } from "@/components/ui/card";
@@ -17,14 +18,33 @@ type JobDetailPageProps = {
 export default async function JobDetailPage({ params }: JobDetailPageProps) {
   const { id } = await params;
   const supabase = await createSupabaseServerClient();
-  const { data: job, error } = await supabase
-    .from("jobs")
-    .select("*, companies(id, name), services(id, name)")
-    .eq("id", id)
-    .single();
+  const [jobResult, applicationResult] = await Promise.all([
+    supabase
+      .from("jobs")
+      .select("*, companies(id, name), services(id, name)")
+      .eq("id", id)
+      .single(),
+    supabase
+      .from("applications")
+      .select("id, status, applied_at, next_action, next_deadline, interest_level")
+      .eq("job_id", id)
+      .maybeSingle(),
+  ]);
 
-  if (error || !job) {
+  if (jobResult.error) {
     notFound();
+  }
+
+  const job = jobResult.data;
+
+  if (!job) {
+    notFound();
+  }
+
+  if (applicationResult.error) {
+    throw new Error(
+      `Failed to load related application: ${applicationResult.error.message}`,
+    );
   }
 
   const jobWithRelations = job as JobWithRelations;
@@ -55,6 +75,8 @@ export default async function JobDetailPage({ params }: JobDetailPageProps) {
       <Card>
         <JobDetail job={jobWithRelations} />
       </Card>
+
+      <JobApplicationRelated application={applicationResult.data} />
 
       <Card className="mt-6 border-red-200">
         <div className="flex items-center justify-between gap-4">

@@ -2,6 +2,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { deleteApplication } from "@/app/applications/actions";
 import { ApplicationDetail } from "@/components/applications/application-detail";
+import { ApplicationRelated } from "@/components/applications/application-related";
 import type { ApplicationWithRelations } from "@/components/applications/application-types";
 import { DeleteApplicationButton } from "@/components/applications/delete-application-button";
 import { Card } from "@/components/ui/card";
@@ -19,14 +20,43 @@ export default async function ApplicationDetailPage({
 }: ApplicationDetailPageProps) {
   const { id } = await params;
   const supabase = await createSupabaseServerClient();
-  const { data: application, error } = await supabase
-    .from("applications")
-    .select("*, jobs(id, title, company_id, service_id, companies(id, name), services(id, name))")
-    .eq("id", id)
-    .single();
+  const [applicationResult, interviewsResult, tasksResult] = await Promise.all([
+    supabase
+      .from("applications")
+      .select("*, jobs(id, title, company_id, service_id, companies(id, name), services(id, name))")
+      .eq("id", id)
+      .single(),
+    supabase
+      .from("interviews")
+      .select("id, type, scheduled_at, location, participants")
+      .eq("application_id", id)
+      .order("scheduled_at", { ascending: true }),
+    supabase
+      .from("tasks")
+      .select("id, title, type, due_date, priority, is_completed")
+      .eq("application_id", id)
+      .order("is_completed", { ascending: true })
+      .order("due_date", { ascending: true }),
+  ]);
 
-  if (error || !application) {
+  if (applicationResult.error) {
     notFound();
+  }
+
+  const application = applicationResult.data;
+
+  if (!application) {
+    notFound();
+  }
+
+  if (interviewsResult.error) {
+    throw new Error(
+      `Failed to load related interviews: ${interviewsResult.error.message}`,
+    );
+  }
+
+  if (tasksResult.error) {
+    throw new Error(`Failed to load related tasks: ${tasksResult.error.message}`);
   }
 
   const applicationWithRelations = application as ApplicationWithRelations;
@@ -64,6 +94,11 @@ export default async function ApplicationDetailPage({
       <Card>
         <ApplicationDetail application={applicationWithRelations} />
       </Card>
+
+      <ApplicationRelated
+        interviews={interviewsResult.data ?? []}
+        tasks={tasksResult.data ?? []}
+      />
 
       <Card className="mt-6 border-red-200">
         <div className="flex items-center justify-between gap-4">
