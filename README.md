@@ -50,13 +50,34 @@ npm run dev
 - `/login`
 - `/dashboard`
 - `/services`
+- `/services/new`
+- `/services/[id]`
+- `/services/[id]/edit`
 - `/companies`
+- `/companies/new`
+- `/companies/[id]`
+- `/companies/[id]/edit`
 - `/contacts`
+- `/contacts/new`
+- `/contacts/[id]`
+- `/contacts/[id]/edit`
 - `/jobs`
+- `/jobs/new`
+- `/jobs/[id]`
+- `/jobs/[id]/edit`
 - `/applications`
+- `/applications/new`
+- `/applications/[id]`
+- `/applications/[id]/edit`
 - `/applications/kanban`
 - `/interviews`
+- `/interviews/new`
+- `/interviews/[id]`
+- `/interviews/[id]/edit`
 - `/tasks`
+- `/tasks/new`
+- `/tasks/[id]`
+- `/tasks/[id]/edit`
 
 ## 実装済み機能
 
@@ -64,27 +85,50 @@ npm run dev
 - Supabase Auth によるログイン / ログアウト
 - 未ログイン時の `/login` 誘導
 - ログイン後の Header / Sidebar / Main Content レイアウト
-- ダッシュボード仮表示
 - 転職サービス CRUD
 - 会社 CRUD
 - 担当者 CRUD
 - 求人 CRUD
+- 応募・選考 CRUD
+- 面談予定 CRUD
+- タスク・期限 CRUD
 - 一覧フィルタ / 検索
 - 削除確認
 - 独自バリデーション表示
 - バリデーションエラー時の入力値保持
 - サービス詳細・会社詳細での関連担当者 / 関連求人表示
+- 求人詳細での関連応募表示
+- 応募・選考詳細での関連面談予定 / 関連タスク表示
+- 応募・選考の一覧 / カンバン表示切り替え
+- 選考カンバンの実データ表示
+- ダッシュボードの実データ集計
+- ダッシュボードでの直近面談予定 / 期限が近いタスク表示
+- ステータス別応募件数表示
 
 ## 未実装機能
 
-- 応募・選考 CRUD
-- 面談予定 CRUD
-- タスク・期限 CRUD
-- 選考カンバンの実データ表示
-- ダッシュボードの実データ集計
 - AI求人票解析
 - CSV出力
 - 通知機能
+- Googleカレンダー連携
+- PDF出力
+- ユーザー設定画面
+- 管理者画面
+- ドラッグ&ドロップ式カンバン更新
+
+## 開発状況
+
+現在は Phase4 まで完了しています。
+
+| Phase | 内容 | 状態 |
+| --- | --- | --- |
+| Phase1 | 認証、Supabase接続、共通レイアウト | 完了 |
+| Phase2 | 転職サービス、会社、担当者、求人の基本CRUD | 完了 |
+| Phase3 | 応募・選考、面談予定、タスク・期限、カンバン | 完了 |
+| Phase4 | ダッシュボード、期限注意、ステータス別件数、関連表示 | 完了 |
+| Phase5 | ドキュメント整理、UX改善、リリース準備、拡張検討 | 進行予定 |
+
+詳細な進捗は [docs/development_log.md](./docs/development_log.md) を参照してください。
 
 ## 動作確認コマンド
 
@@ -99,4 +143,4 @@ npm run build
 - `.env.local` は Git 管理しません。
 - パスワードそのものは保存しません。
 - 主要テーブルは `user_id` を持ち、Supabase RLS によりログインユーザー本人のデータのみ操作できる設計です。
-- Phase2 では `services` / `companies` / `contacts` / `jobs` の基本 CRUD を対象にしています。
+- Supabase の SQL は、Markdown のコードフェンスを含めず SQL 本文のみを SQL Editor で実行してください。
