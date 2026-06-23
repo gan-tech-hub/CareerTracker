@@ -1,12 +1,20 @@
 import { Card } from "@/components/ui/card";
 import { PageHeader } from "@/components/ui/page-header";
 
-const metrics = [
-  { label: "応募中件数", value: "8" },
-  { label: "面談予定件数", value: "3" },
-  { label: "期限切れタスク", value: "1" },
-  { label: "7日以内の期限タスク", value: "5" },
-];
+type DashboardMetric = {
+  label: string;
+  value: number;
+};
+
+type ApplicationStatusCount = {
+  label: string;
+  count: number;
+};
+
+type DashboardSummaryProps = {
+  applicationStatusCounts: ApplicationStatusCount[];
+  metrics: DashboardMetric[];
+};
 
 const interviews = [
   {
@@ -29,20 +37,14 @@ const tasks = [
   { due: "2026-06-23", title: "エージェントへ返信", type: "返信", priority: "中" },
 ];
 
-const statuses = [
-  { label: "気になる", count: 4 },
-  { label: "応募予定", count: 2 },
-  { label: "応募済み", count: 3 },
-  { label: "書類選考中", count: 2 },
-  { label: "一次面接", count: 1 },
-  { label: "内定", count: 0 },
-];
-
-export function DashboardSummary() {
+export function DashboardSummary({
+  applicationStatusCounts,
+  metrics,
+}: DashboardSummaryProps) {
   return (
     <>
       <PageHeader
-        description="転職活動の状況を仮データで一覧表示しています。"
+        description="転職活動の状況を一覧で確認できます。"
         title="ダッシュボード"
       />
 
@@ -101,7 +103,7 @@ export function DashboardSummary() {
           ステータス別応募件数
         </h3>
         <div className="grid gap-3 md:grid-cols-3 xl:grid-cols-6">
-          {statuses.map((status) => (
+          {applicationStatusCounts.map((status) => (
             <div className="rounded-md border border-border p-4" key={status.label}>
               <p className="text-sm text-muted">{status.label}</p>
               <p className="mt-2 text-2xl font-semibold text-ink">{status.count}</p>
