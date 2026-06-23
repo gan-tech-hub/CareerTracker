@@ -1,13 +1,21 @@
 import { APPLICATION_STATUSES } from "@/lib/constants/applications";
 import type { ApplicationWithRelations } from "./application-types";
-import { ApplicationKanbanCard } from "./application-kanban-card";
+import {
+  ApplicationKanbanCard,
+  type RelatedKanbanInterview,
+  type RelatedKanbanTask,
+} from "./application-kanban-card";
 
 type ApplicationKanbanBoardProps = {
   applications: ApplicationWithRelations[];
+  interviewsByApplicationId: Record<string, RelatedKanbanInterview[]>;
+  tasksByApplicationId: Record<string, RelatedKanbanTask[]>;
 };
 
 export function ApplicationKanbanBoard({
   applications,
+  interviewsByApplicationId,
+  tasksByApplicationId,
 }: ApplicationKanbanBoardProps) {
   return (
     <div className="overflow-x-auto pb-2">
@@ -40,7 +48,9 @@ export function ApplicationKanbanBoard({
                   {statusApplications.map((application) => (
                     <ApplicationKanbanCard
                       application={application}
+                      interviews={interviewsByApplicationId[application.id] ?? []}
                       key={application.id}
+                      tasks={tasksByApplicationId[application.id] ?? []}
                     />
                   ))}
                 </div>
