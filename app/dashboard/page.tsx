@@ -27,6 +27,8 @@ export default async function DashboardPage() {
     upcomingInterviewsResult,
     overdueTasksResult,
     upcomingTasksResult,
+    upcomingInterviewListResult,
+    upcomingTaskListResult,
   ] = await Promise.all([
     supabase.from("applications").select("status"),
     supabase
@@ -44,6 +46,19 @@ export default async function DashboardPage() {
       .eq("is_completed", false)
       .gte("due_date", todayText)
       .lte("due_date", sevenDaysLaterText),
+    supabase
+      .from("interviews")
+      .select("id, type, scheduled_at, applications(id, jobs(id, title, companies(id, name), services(id, name)))")
+      .gte("scheduled_at", now.toISOString())
+      .order("scheduled_at", { ascending: true })
+      .limit(5),
+    supabase
+      .from("tasks")
+      .select("id, title, type, due_date, priority, applications(id, jobs(id, title, companies(id, name), services(id, name)))")
+      .eq("is_completed", false)
+      .gte("due_date", todayText)
+      .order("due_date", { ascending: true })
+      .limit(5),
   ]);
 
   if (applicationsResult.error) {
@@ -70,6 +85,18 @@ export default async function DashboardPage() {
     );
   }
 
+  if (upcomingInterviewListResult.error) {
+    throw new Error(
+      `Failed to load dashboard interview list: ${upcomingInterviewListResult.error.message}`,
+    );
+  }
+
+  if (upcomingTaskListResult.error) {
+    throw new Error(
+      `Failed to load dashboard task list: ${upcomingTaskListResult.error.message}`,
+    );
+  }
+
   const applicationStatuses = applicationsResult.data ?? [];
   const activeApplicationCount = applicationStatuses.filter(
     (application) => !inactiveApplicationStatuses.has(application.status),
@@ -91,6 +118,8 @@ export default async function DashboardPage() {
     <DashboardSummary
       applicationStatusCounts={applicationStatusCounts}
       metrics={metrics}
+      upcomingInterviews={upcomingInterviewListResult.data ?? []}
+      upcomingTasks={upcomingTaskListResult.data ?? []}
     />
   );
 }

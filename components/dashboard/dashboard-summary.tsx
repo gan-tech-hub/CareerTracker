@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { Card } from "@/components/ui/card";
 import { PageHeader } from "@/components/ui/page-header";
 
@@ -11,35 +12,84 @@ type ApplicationStatusCount = {
   count: number;
 };
 
+type DashboardInterview = {
+  id: string;
+  type: string;
+  scheduled_at: string;
+  applications: {
+    jobs:
+      | {
+          title: string;
+          companies: { name: string } | null;
+        }
+      | null;
+  } | null;
+};
+
+type DashboardTask = {
+  id: string;
+  title: string;
+  type: string;
+  due_date: string;
+  priority: string;
+  applications: {
+    jobs:
+      | {
+          title: string;
+          companies: { name: string } | null;
+        }
+      | null;
+  } | null;
+};
+
 type DashboardSummaryProps = {
   applicationStatusCounts: ApplicationStatusCount[];
   metrics: DashboardMetric[];
+  upcomingInterviews: DashboardInterview[];
+  upcomingTasks: DashboardTask[];
 };
 
-const interviews = [
-  {
-    date: "2026-06-20 10:00",
-    type: "一次面接",
-    company: "サンプル株式会社",
-    job: "Frontend Engineer",
-  },
-  {
-    date: "2026-06-24 14:30",
-    type: "カジュアル面談",
-    company: "Career Tech Inc.",
-    job: "Full Stack Engineer",
-  },
-];
+function formatDate(value: string) {
+  return new Intl.DateTimeFormat("ja-JP", {
+    dateStyle: "medium",
+  }).format(new Date(`${value}T00:00:00`));
+}
 
-const tasks = [
-  { due: "2026-06-18", title: "職務経歴書を更新", type: "書類提出", priority: "高" },
-  { due: "2026-06-21", title: "面接質問を整理", type: "面談準備", priority: "中" },
-  { due: "2026-06-23", title: "エージェントへ返信", type: "返信", priority: "中" },
-];
+function formatDateTime(value: string) {
+  return new Intl.DateTimeFormat("ja-JP", {
+    dateStyle: "medium",
+    timeStyle: "short",
+  }).format(new Date(value));
+}
+
+function relationLabel(
+  relation: {
+    jobs:
+      | {
+          title: string;
+          companies: { name: string } | null;
+        }
+      | null;
+  } | null,
+) {
+  const companyName = relation?.jobs?.companies?.name ?? "会社未設定";
+  const jobTitle = relation?.jobs?.title ?? "求人未設定";
+  return `${companyName} / ${jobTitle}`;
+}
+
+function EmptyMessage({ children }: { children: React.ReactNode }) {
+  return (
+    <p className="rounded-md border border-dashed border-border bg-white px-4 py-6 text-sm text-muted">
+      {children}
+    </p>
+  );
+}
 
 export function DashboardSummary({
   applicationStatusCounts,
   metrics,
+  upcomingInterviews,
+  upcomingTasks,
 }: DashboardSummaryProps) {
   return (
     <>
@@ -60,41 +110,70 @@ export function DashboardSummary({
       <div className="mt-6 grid gap-6 xl:grid-cols-2">
         <Card>
           <h3 className="mb-4 text-base font-semibold text-ink">直近の面談予定</h3>
-          <div className="space-y-3">
-            {interviews.map((interview) => (
-              <div
-                className="rounded-md border border-border px-4 py-3"
-                key={`${interview.date}-${interview.company}`}
-              >
-                <p className="text-sm font-medium text-ink">{interview.date}</p>
-                <p className="mt-1 text-sm text-muted">
-                  {interview.type} / {interview.company} / {interview.job}
-                </p>
-              </div>
-            ))}
-          </div>
+          {upcomingInterviews.length === 0 ? (
+            <EmptyMessage>直近の面談予定はありません。</EmptyMessage>
+          ) : (
+            <div className="space-y-3">
+              {upcomingInterviews.map((interview) => (
+                <div
+                  className="rounded-md border border-border px-4 py-3"
+                  key={interview.id}
+                >
+                  <div className="flex items-start justify-between gap-3">
+                    <div>
+                      <p className="text-sm font-medium text-ink">
+                        {formatDateTime(interview.scheduled_at)}
+                      </p>
+                      <p className="mt-1 text-sm text-muted">
+                        {interview.type} / {relationLabel(interview.applications)}
+                      </p>
+                    </div>
+                    <Link
+                      className="shrink-0 text-xs font-medium text-ink underline"
+                      href={`/interviews/${interview.id}`}
+                    >
+                      詳細
+                    </Link>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
         </Card>
 
         <Card>
           <h3 className="mb-4 text-base font-semibold text-ink">期限が近いタスク</h3>
-          <div className="space-y-3">
-            {tasks.map((task) => (
-              <div
-                className="flex items-center justify-between rounded-md border border-border px-4 py-3"
-                key={`${task.due}-${task.title}`}
-              >
-                <div>
-                  <p className="text-sm font-medium text-ink">{task.title}</p>
-                  <p className="mt-1 text-sm text-muted">
-                    {task.due} / {task.type}
-                  </p>
+          {upcomingTasks.length === 0 ? (
+            <EmptyMessage>期限が近いタスクはありません。</EmptyMessage>
+          ) : (
+            <div className="space-y-3">
+              {upcomingTasks.map((task) => (
+                <div
+                  className="rounded-md border border-border px-4 py-3"
+                  key={task.id}
+                >
+                  <div className="flex items-start justify-between gap-3">
+                    <div>
+                      <p className="text-sm font-medium text-ink">{task.title}</p>
+                      <p className="mt-1 text-sm text-muted">
+                        {formatDate(task.due_date)} / {task.type} /{" "}
+                        {task.priority}
+                      </p>
+                      <p className="mt-1 text-xs text-muted">
+                        {relationLabel(task.applications)}
+                      </p>
+                    </div>
+                    <Link
+                      className="shrink-0 text-xs font-medium text-ink underline"
+                      href={`/tasks/${task.id}`}
+                    >
+                      詳細
+                    </Link>
+                  </div>
                 </div>
-                <span className="rounded-md bg-surface px-2 py-1 text-xs text-muted">
-                  {task.priority}
-                </span>
-              </div>
-            ))}
-          </div>
+              ))}
+            </div>
+          )}
         </Card>
       </div>
 
