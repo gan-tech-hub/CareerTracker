@@ -9,6 +9,7 @@
 - Tailwind CSS
 - Supabase Auth
 - Supabase PostgreSQL
+- Vercel
 
 ## 初期セットアップ
 
@@ -44,6 +45,10 @@ npm run dev
 ```
 
 7. ブラウザで `http://localhost:3000/login` を開きます。
+
+## デプロイ準備
+
+Vercelへのデプロイ手順と公開前チェックは [docs/deployment.md](./docs/deployment.md) を参照してください。
 
 ## 利用可能な画面
 
@@ -103,6 +108,7 @@ npm run dev
 - 選考カンバンの実データ表示
 - ダッシュボードの実データ集計
 - ダッシュボードでの直近面談予定 / 期限が近いタスク表示
+- ダッシュボードでの期限切れタスク / 優先度高の求人表示
 - ステータス別応募件数表示
 
 ## 未実装機能
@@ -118,7 +124,7 @@ npm run dev
 
 ## 開発状況
 
-現在は Phase4 まで完了しています。
+現在は Phase5-4 まで進行しています。
 
 | Phase | 内容 | 状態 |
 | --- | --- | --- |
@@ -126,7 +132,7 @@ npm run dev
 | Phase2 | 転職サービス、会社、担当者、求人の基本CRUD | 完了 |
 | Phase3 | 応募・選考、面談予定、タスク・期限、カンバン | 完了 |
 | Phase4 | ダッシュボード、期限注意、ステータス別件数、関連表示 | 完了 |
-| Phase5 | ドキュメント整理、UX改善、リリース準備、拡張検討 | 進行予定 |
+| Phase5 | ドキュメント整理、UX改善、ダッシュボード改善、リリース準備 | 進行中 |
 
 詳細な進捗は [docs/development_log.md](./docs/development_log.md) を参照してください。
 
