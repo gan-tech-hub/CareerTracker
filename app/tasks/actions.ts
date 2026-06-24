@@ -237,6 +237,29 @@ export async function updateTask(
   redirect(`/tasks/${id}`);
 }
 
+export async function toggleTaskCompletion(formData: FormData) {
+  const id = String(formData.get("id") ?? "");
+  const nextCompleted = String(formData.get("next_completed") ?? "") === "true";
+
+  if (!id) {
+    redirect("/tasks");
+  }
+
+  const supabase = await createSupabaseServerClient();
+  const { error } = await supabase
+    .from("tasks")
+    .update({ is_completed: nextCompleted })
+    .eq("id", id);
+
+  if (error) {
+    throw new Error(`Failed to update task completion: ${error.message}`);
+  }
+
+  revalidatePath("/dashboard");
+  revalidatePath("/tasks");
+  revalidatePath(`/tasks/${id}`);
+}
+
 export async function deleteTask(formData: FormData) {
   const id = String(formData.get("id") ?? "");
 

@@ -1,5 +1,7 @@
 import Link from "next/link";
+import { toggleTaskCompletion } from "@/app/tasks/actions";
 import type { TaskWithRelations } from "./task-types";
+import { ToggleTaskCompletionButton } from "./toggle-task-completion-button";
 
 type TasksTableProps = {
   tasks: TaskWithRelations[];
@@ -38,7 +40,7 @@ export function TasksTable({ tasks }: TasksTableProps) {
 
   return (
     <div className="overflow-x-auto rounded-md border border-border bg-white shadow-panel">
-      <table className="w-full min-w-[1120px] border-collapse text-left text-sm">
+      <table className="w-full min-w-[1200px] border-collapse text-left text-sm">
         <thead className="bg-surface text-muted">
           <tr>
             <th className="px-4 py-3 font-medium">期限日</th>
@@ -82,12 +84,25 @@ export function TasksTable({ tasks }: TasksTableProps) {
                 {formatDateTime(task.updated_at)}
               </td>
               <td className="px-4 py-3">
-                <Link
-                  className="rounded-md border border-border px-3 py-1.5 text-xs font-medium text-ink transition hover:bg-surface"
-                  href={`/tasks/${task.id}`}
-                >
-                  詳細
-                </Link>
+                <div className="flex items-center gap-2">
+                  <form action={toggleTaskCompletion}>
+                    <input name="id" type="hidden" value={task.id} />
+                    <input
+                      name="next_completed"
+                      type="hidden"
+                      value={String(!task.is_completed)}
+                    />
+                    <ToggleTaskCompletionButton
+                      isCompleted={task.is_completed}
+                    />
+                  </form>
+                  <Link
+                    className="rounded-md border border-border px-3 py-1.5 text-xs font-medium text-ink transition hover:bg-surface"
+                    href={`/tasks/${task.id}`}
+                  >
+                    詳細
+                  </Link>
+                </div>
               </td>
             </tr>
           ))}

@@ -3,6 +3,7 @@ import { Card } from "@/components/ui/card";
 import { PageHeader } from "@/components/ui/page-header";
 
 type DashboardMetric = {
+  href: string;
   label: string;
   value: number;
 };
@@ -85,6 +86,18 @@ function EmptyMessage({ children }: { children: React.ReactNode }) {
   );
 }
 
+function MetricCard({ metric }: { metric: DashboardMetric }) {
+  return (
+    <Link
+      className="rounded-md border border-border bg-white p-5 shadow-panel transition hover:-translate-y-0.5 hover:border-ink/30 hover:shadow-md"
+      href={metric.href}
+    >
+      <p className="text-sm text-muted">{metric.label}</p>
+      <p className="mt-3 text-3xl font-semibold text-ink">{metric.value}</p>
+    </Link>
+  );
+}
+
 export function DashboardSummary({
   applicationStatusCounts,
   metrics,
@@ -100,10 +113,7 @@ export function DashboardSummary({
 
       <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
         {metrics.map((metric) => (
-          <Card key={metric.label}>
-            <p className="text-sm text-muted">{metric.label}</p>
-            <p className="mt-3 text-3xl font-semibold text-ink">{metric.value}</p>
-          </Card>
+          <MetricCard key={metric.label} metric={metric} />
         ))}
       </div>
 
@@ -183,10 +193,14 @@ export function DashboardSummary({
         </h3>
         <div className="grid gap-3 md:grid-cols-3 xl:grid-cols-6">
           {applicationStatusCounts.map((status) => (
-            <div className="rounded-md border border-border p-4" key={status.label}>
+            <Link
+              className="rounded-md border border-border p-4 transition hover:border-ink/30 hover:bg-surface"
+              href={`/applications?status=${encodeURIComponent(status.label)}`}
+              key={status.label}
+            >
               <p className="text-sm text-muted">{status.label}</p>
               <p className="mt-2 text-2xl font-semibold text-ink">{status.count}</p>
-            </div>
+            </Link>
           ))}
         </div>
       </Card>
