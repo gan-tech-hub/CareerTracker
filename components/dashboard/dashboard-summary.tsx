@@ -43,9 +43,21 @@ type DashboardTask = {
   } | null;
 };
 
+type DashboardJob = {
+  id: string;
+  title: string;
+  job_type: string | null;
+  employment_type: string;
+  priority: string;
+  companies: { name: string } | null;
+  services: { name: string } | null;
+};
+
 type DashboardSummaryProps = {
   applicationStatusCounts: ApplicationStatusCount[];
+  highPriorityJobs: DashboardJob[];
   metrics: DashboardMetric[];
+  overdueTasks: DashboardTask[];
   upcomingInterviews: DashboardInterview[];
   upcomingTasks: DashboardTask[];
 };
@@ -98,9 +110,15 @@ function MetricCard({ metric }: { metric: DashboardMetric }) {
   );
 }
 
+function taskRelationLabel(task: DashboardTask) {
+  return relationLabel(task.applications);
+}
+
 export function DashboardSummary({
   applicationStatusCounts,
+  highPriorityJobs,
   metrics,
+  overdueTasks,
   upcomingInterviews,
   upcomingTasks,
 }: DashboardSummaryProps) {
@@ -176,6 +194,94 @@ export function DashboardSummary({
                     <Link
                       className="shrink-0 text-xs font-medium text-ink underline"
                       href={`/tasks/${task.id}`}
+                    >
+                      詳細
+                    </Link>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </Card>
+      </div>
+
+      <div className="mt-6 grid gap-6 xl:grid-cols-2">
+        <Card>
+          <div className="mb-4 flex items-center justify-between gap-3">
+            <h3 className="text-base font-semibold text-ink">期限切れタスク</h3>
+            <Link
+              className="text-xs font-medium text-ink underline"
+              href="/tasks?due_date=overdue"
+            >
+              すべて見る
+            </Link>
+          </div>
+          {overdueTasks.length === 0 ? (
+            <EmptyMessage>期限切れの未完了タスクはありません。</EmptyMessage>
+          ) : (
+            <div className="space-y-3">
+              {overdueTasks.map((task) => (
+                <div
+                  className="rounded-md border border-red-200 bg-red-50/40 px-4 py-3"
+                  key={task.id}
+                >
+                  <div className="flex items-start justify-between gap-3">
+                    <div>
+                      <p className="text-sm font-medium text-ink">{task.title}</p>
+                      <p className="mt-1 text-sm text-muted">
+                        {formatDate(task.due_date)} / {task.type} /{" "}
+                        {task.priority}
+                      </p>
+                      <p className="mt-1 text-xs text-muted">
+                        {taskRelationLabel(task)}
+                      </p>
+                    </div>
+                    <Link
+                      className="shrink-0 text-xs font-medium text-ink underline"
+                      href={`/tasks/${task.id}`}
+                    >
+                      詳細
+                    </Link>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </Card>
+
+        <Card>
+          <div className="mb-4 flex items-center justify-between gap-3">
+            <h3 className="text-base font-semibold text-ink">優先度高の求人</h3>
+            <Link
+              className="text-xs font-medium text-ink underline"
+              href="/jobs?priority=高"
+            >
+              すべて見る
+            </Link>
+          </div>
+          {highPriorityJobs.length === 0 ? (
+            <EmptyMessage>優先度高の求人はありません。</EmptyMessage>
+          ) : (
+            <div className="space-y-3">
+              {highPriorityJobs.map((job) => (
+                <div
+                  className="rounded-md border border-border px-4 py-3"
+                  key={job.id}
+                >
+                  <div className="flex items-start justify-between gap-3">
+                    <div>
+                      <p className="text-sm font-medium text-ink">{job.title}</p>
+                      <p className="mt-1 text-sm text-muted">
+                        {job.companies?.name ?? "会社未設定"} /{" "}
+                        {job.services?.name ?? "サービス未設定"}
+                      </p>
+                      <p className="mt-1 text-xs text-muted">
+                        {job.job_type ?? "職種未設定"} / {job.employment_type}
+                      </p>
+                    </div>
+                    <Link
+                      className="shrink-0 text-xs font-medium text-ink underline"
+                      href={`/jobs/${job.id}`}
                     >
                       詳細
                     </Link>
