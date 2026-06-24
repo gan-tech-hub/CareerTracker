@@ -1,56 +1,86 @@
 # Career Tracker
 
-個人用の転職活動管理アプリです。転職サービス、会社、担当者、求人、応募・選考、面談予定、タスク・期限を一元管理することを目的にしています。
+Career Tracker は、Next.js / TypeScript / Tailwind CSS / Supabase で実装した個人用の転職活動管理アプリです。
 
-## 技術スタック
+複数の転職サービス、会社、求人、応募・選考、面談予定、タスク・期限を一元管理するためのWebアプリです。  
+個人利用を前提にしたMVPとして、転職活動の情報を「登録する」だけでなく、関連情報や期限を追いやすい状態にすることを重視しています。
+
+## Screenshots
+
+### Dashboard
+
+応募状況、面談予定、期限切れタスク、優先度高の求人を一覧できます。
+
+![Dashboard](./public/screenshots/dashboard.png)
+
+### Applications Kanban
+
+応募・選考状況をステータス別に確認できます。
+
+![Applications Kanban](./public/screenshots/applications-kanban.png)
+
+### Application Detail
+
+応募・選考の詳細と、関連する面談予定・タスクを一画面で確認できます。
+
+![Application Detail](./public/screenshots/application-detail.png)
+
+### Jobs List
+
+求人を会社、サービス、勤務形態、優先度などで管理できます。
+
+![Jobs List](./public/screenshots/jobs-list.png)
+
+### Tasks List
+
+期限付きタスクを一覧で確認し、完了状態を直接切り替えられます。
+
+![Tasks List](./public/screenshots/tasks-list.png)
+
+## Features
+
+- Supabase Authによるログイン / ログアウト
+- 未ログイン時の保護ページ制御
+- 転職サービス、会社、担当者、求人のCRUD
+- 応募・選考、面談予定、タスク・期限のCRUD
+- 一覧検索 / フィルタ
+- 削除確認
+- 独自バリデーション表示
+- バリデーションエラー時の入力値保持
+- 求人、応募、面談、タスクの関連表示
+- 応募・選考の一覧 / カンバン表示切り替え
+- ダッシュボードの実データ集計
+- 期限切れタスク、期限が近いタスク、優先度高の求人の表示
+- ステータス別応募件数表示
+- タスク完了状態の直接切り替え
+- Supabase RLSによるユーザー別データ制御
+
+## Tech Stack
 
 - Next.js
+- React
 - TypeScript
 - Tailwind CSS
 - Supabase Auth
 - Supabase PostgreSQL
+- Supabase Row Level Security
 - Vercel
 
-## 初期セットアップ
+## App Structure
 
-1. 依存関係をインストールします。
+主な管理対象は以下です。
 
-```bash
-npm install
-```
+| Domain | 内容 |
+| --- | --- |
+| Services | 転職サイト、転職エージェント、スカウトサービス |
+| Companies | 応募先企業 |
+| Contacts | エージェント、企業人事、スカウト担当 |
+| Jobs | 求人情報 |
+| Applications | 応募・選考状況 |
+| Interviews | 面談予定、面接予定 |
+| Tasks | 返信、書類提出、面談準備などの期限付きタスク |
 
-2. 環境変数ファイルを作成します。
-
-```bash
-cp .env.example .env.local
-```
-
-3. `.env.local` に Supabase の接続情報を設定します。
-
-```env
-NEXT_PUBLIC_SUPABASE_URL=
-NEXT_PUBLIC_SUPABASE_ANON_KEY=
-```
-
-4. Supabase の SQL Editor で [supabase/schema.sql](./supabase/schema.sql) の内容を実行します。
-
-SQL Editor へ貼り付ける際は、Markdown のコードフェンス（```sql など）は含めず、SQL本文のみを実行してください。
-
-5. Supabase Authentication でログイン用ユーザーを作成します。
-
-6. 開発サーバーを起動します。
-
-```bash
-npm run dev
-```
-
-7. ブラウザで `http://localhost:3000/login` を開きます。
-
-## デプロイ準備
-
-Vercelへのデプロイ手順と公開前チェックは [docs/deployment.md](./docs/deployment.md) を参照してください。
-
-## 利用可能な画面
+## Available Pages
 
 - `/login`
 - `/dashboard`
@@ -84,59 +114,60 @@ Vercelへのデプロイ手順と公開前チェックは [docs/deployment.md](.
 - `/tasks/[id]`
 - `/tasks/[id]/edit`
 
-## 実装済み機能
+## Setup
 
-- Supabase クライアント設定
-- Supabase Auth によるログイン / ログアウト
-- 未ログイン時の `/login` 誘導
-- ログイン後の Header / Sidebar / Main Content レイアウト
-- 転職サービス CRUD
-- 会社 CRUD
-- 担当者 CRUD
-- 求人 CRUD
-- 応募・選考 CRUD
-- 面談予定 CRUD
-- タスク・期限 CRUD
-- 一覧フィルタ / 検索
-- 削除確認
-- 独自バリデーション表示
-- バリデーションエラー時の入力値保持
-- サービス詳細・会社詳細での関連担当者 / 関連求人表示
-- 求人詳細での関連応募表示
-- 応募・選考詳細での関連面談予定 / 関連タスク表示
-- 応募・選考の一覧 / カンバン表示切り替え
-- 選考カンバンの実データ表示
-- ダッシュボードの実データ集計
-- ダッシュボードでの直近面談予定 / 期限が近いタスク表示
-- ダッシュボードでの期限切れタスク / 優先度高の求人表示
-- ステータス別応募件数表示
+1. 依存関係をインストールします。
 
-## 未実装機能
+```bash
+npm install
+```
 
-- AI求人票解析
-- CSV出力
-- 通知機能
-- Googleカレンダー連携
-- PDF出力
-- ユーザー設定画面
-- 管理者画面
-- ドラッグ&ドロップ式カンバン更新
+2. 環境変数ファイルを作成します。
 
-## 開発状況
+```bash
+cp .env.example .env.local
+```
 
-現在は Phase5-4 まで進行しています。
+3. `.env.local` に Supabase の接続情報を設定します。
 
-| Phase | 内容 | 状態 |
-| --- | --- | --- |
-| Phase1 | 認証、Supabase接続、共通レイアウト | 完了 |
-| Phase2 | 転職サービス、会社、担当者、求人の基本CRUD | 完了 |
-| Phase3 | 応募・選考、面談予定、タスク・期限、カンバン | 完了 |
-| Phase4 | ダッシュボード、期限注意、ステータス別件数、関連表示 | 完了 |
-| Phase5 | ドキュメント整理、UX改善、ダッシュボード改善、リリース準備 | 進行中 |
+```env
+NEXT_PUBLIC_SUPABASE_URL=
+NEXT_PUBLIC_SUPABASE_ANON_KEY=
+```
 
-詳細な進捗は [docs/development_log.md](./docs/development_log.md) を参照してください。
+4. Supabase SQL Editorでデータベーススキーマを実行します。
 
-## 動作確認コマンド
+[supabase/schema.sql](./supabase/schema.sql) を使用します。
+
+SQL Editorへ貼り付ける際は、SQL本文のみを実行してください。Markdownのコードフェンス（```sql など）は含めないでください。
+
+5. Supabase Authenticationでログイン用ユーザーを作成します。
+
+6. 開発サーバーを起動します。
+
+```bash
+npm run dev
+```
+
+7. ブラウザでアプリを開きます。
+
+```text
+http://localhost:3000/login
+```
+
+## Demo Data
+
+ポートフォリオ用スクリーンショットは、デモデータを投入することで再現できます。
+
+[docs/demo-data.md](./docs/demo-data.md) と [supabase/seed.sql](./supabase/seed.sql) を参照してください。
+
+seed SQLは、指定したSupabase Authユーザーに対して、転職サービス、会社、担当者、求人、応募・選考、面談予定、タスクのデモデータを作成します。
+
+## Deployment
+
+Vercelへのデプロイ手順は [docs/deployment.md](./docs/deployment.md) にまとめています。
+
+デプロイ前に以下を実行します。
 
 ```bash
 npm run typecheck
@@ -144,9 +175,35 @@ npm run lint
 npm run build
 ```
 
-## 開発メモ
+## Development Status
 
-- `.env.local` は Git 管理しません。
-- パスワードそのものは保存しません。
-- 主要テーブルは `user_id` を持ち、Supabase RLS によりログインユーザー本人のデータのみ操作できる設計です。
-- Supabase の SQL は、Markdown のコードフェンスを含めず SQL 本文のみを SQL Editor で実行してください。
+MVPは完成済みです。
+
+| Phase | 内容 | 状態 |
+| --- | --- | --- |
+| Phase1 | 認証、Supabase接続、共通レイアウト | 完了 |
+| Phase2 | 転職サービス、会社、担当者、求人の基本CRUD | 完了 |
+| Phase3 | 応募・選考、面談予定、タスク・期限、カンバン | 完了 |
+| Phase4 | ダッシュボード、期限注意、ステータス別件数、関連表示 | 完了 |
+| Phase5 | ドキュメント整理、UX改善、ダッシュボード改善、リリース準備 | 完了 |
+| Phase6 | ポートフォリオ化、デモデータ、スクリーンショット整備 | 進行中 |
+
+詳細な進捗は [docs/development_log.md](./docs/development_log.md) に記録しています。
+
+## Roadmap
+
+- AI求人票解析
+- CSV出力
+- 通知機能
+- Googleカレンダー連携
+- PDF出力
+- READMEへの追加スクリーンショット反映
+- デモデータと公開用説明の継続改善
+
+## Notes
+
+- `.env.local` はGit管理しません。
+- 転職サービス等のパスワードは保存しません。
+- 主要テーブルは `user_id` を持ちます。
+- Supabase RLSにより、ログインユーザー本人のデータのみ操作できる設計です。
+- デモデータには架空の会社、担当者、応募情報のみを使用します。
