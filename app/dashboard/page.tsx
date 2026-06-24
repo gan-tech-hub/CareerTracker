@@ -29,6 +29,8 @@ export default async function DashboardPage() {
     upcomingTasksResult,
     upcomingInterviewListResult,
     upcomingTaskListResult,
+    overdueTaskListResult,
+    highPriorityJobListResult,
   ] = await Promise.all([
     supabase.from("applications").select("status"),
     supabase
@@ -58,6 +60,19 @@ export default async function DashboardPage() {
       .eq("is_completed", false)
       .gte("due_date", todayText)
       .order("due_date", { ascending: true })
+      .limit(5),
+    supabase
+      .from("tasks")
+      .select("id, title, type, due_date, priority, applications(id, jobs(id, title, companies(id, name), services(id, name)))")
+      .eq("is_completed", false)
+      .lt("due_date", todayText)
+      .order("due_date", { ascending: true })
+      .limit(5),
+    supabase
+      .from("jobs")
+      .select("id, title, job_type, employment_type, priority, companies(id, name), services(id, name)")
+      .eq("priority", "高")
+      .order("updated_at", { ascending: false })
       .limit(5),
   ]);
 
@@ -97,6 +112,18 @@ export default async function DashboardPage() {
     );
   }
 
+  if (overdueTaskListResult.error) {
+    throw new Error(
+      `Failed to load dashboard overdue task list: ${overdueTaskListResult.error.message}`,
+    );
+  }
+
+  if (highPriorityJobListResult.error) {
+    throw new Error(
+      `Failed to load dashboard high priority job list: ${highPriorityJobListResult.error.message}`,
+    );
+  }
+
   const applicationStatuses = applicationsResult.data ?? [];
   const activeApplicationCount = applicationStatuses.filter(
     (application) => !inactiveApplicationStatuses.has(application.status),
@@ -118,6 +145,8 @@ export default async function DashboardPage() {
     <DashboardSummary
       applicationStatusCounts={applicationStatusCounts}
       metrics={metrics}
+      highPriorityJobs={highPriorityJobListResult.data ?? []}
+      overdueTasks={overdueTaskListResult.data ?? []}
       upcomingInterviews={upcomingInterviewListResult.data ?? []}
       upcomingTasks={upcomingTaskListResult.data ?? []}
     />
