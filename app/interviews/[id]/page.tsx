@@ -45,6 +45,14 @@ export default async function InterviewDetailPage({
           title={title}
         />
         <div className="flex items-center gap-2">
+          {interviewWithRelations.applications ? (
+            <Link
+              className="rounded-md border border-border bg-white px-4 py-2 text-sm font-medium text-ink transition hover:bg-surface"
+              href={`/applications/${interviewWithRelations.applications.id}`}
+            >
+              応募詳細へ戻る
+            </Link>
+          ) : null}
           <Link
             className="rounded-md border border-border bg-white px-4 py-2 text-sm font-medium text-ink transition hover:bg-surface"
             href="/interviews"

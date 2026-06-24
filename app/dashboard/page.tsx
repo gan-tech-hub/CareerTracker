@@ -108,10 +108,10 @@ export default async function DashboardPage() {
   }));
 
   const metrics = [
-    { label: "応募中件数", value: activeApplicationCount },
-    { label: "面談予定件数", value: upcomingInterviewsResult.count ?? 0 },
-    { label: "期限切れタスク", value: overdueTasksResult.count ?? 0 },
-    { label: "7日以内の期限タスク", value: upcomingTasksResult.count ?? 0 },
+    { href: "/applications", label: "応募中件数", value: activeApplicationCount },
+    { href: "/interviews", label: "面談予定件数", value: upcomingInterviewsResult.count ?? 0 },
+    { href: "/tasks?due_date=overdue", label: "期限切れタスク", value: overdueTasksResult.count ?? 0 },
+    { href: "/tasks?due_date=within_7_days", label: "7日以内の期限タスク", value: upcomingTasksResult.count ?? 0 },
   ];
 
   return (
