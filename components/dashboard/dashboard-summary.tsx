@@ -124,10 +124,18 @@ export function DashboardSummary({
 }: DashboardSummaryProps) {
   return (
     <>
-      <PageHeader
-        description="転職活動の状況を一覧で確認できます。"
-        title="ダッシュボード"
-      />
+      <div className="mb-6 flex items-start justify-between gap-4">
+        <PageHeader
+          description="転職活動の状況を一覧で確認できます。"
+          title="ダッシュボード"
+        />
+        <Link
+          className="rounded-md border border-border bg-white px-4 py-2 text-sm font-medium text-ink transition hover:bg-surface"
+          href="/dashboard/ai-summary"
+        >
+          AIで選考状況を要約
+        </Link>
+      </div>
 
       <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
         {metrics.map((metric) => (
