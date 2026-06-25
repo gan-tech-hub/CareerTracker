@@ -55,6 +55,7 @@ Career Tracker は、Next.js / TypeScript / Tailwind CSS / Supabase で実装し
 - タスク完了状態の直接切り替え
 - Supabase RLSによるユーザー別データ制御
 - OpenAI APIによる求人票解析
+- OpenAI APIによる応募・面接準備メモ生成
 - OpenAI API未設定時のモック解析fallback
 
 ## Tech Stack
@@ -106,6 +107,7 @@ Career Tracker は、Next.js / TypeScript / Tailwind CSS / Supabase で実装し
 - `/applications`
 - `/applications/new`
 - `/applications/[id]`
+- `/applications/[id]/ai-prep`
 - `/applications/[id]/edit`
 - `/applications/kanban`
 - `/interviews`

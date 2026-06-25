@@ -69,7 +69,13 @@ export default async function ApplicationDetailPage({
           description="応募状況と選考ステータスの詳細を確認します。"
           title={title}
         />
-        <div className="flex items-center gap-2">
+        <div className="flex flex-wrap items-center justify-end gap-2">
+          <Link
+            className="rounded-md border border-border bg-white px-4 py-2 text-sm font-medium text-ink transition hover:bg-surface"
+            href={`/applications/${applicationWithRelations.id}/ai-prep`}
+          >
+            AIで準備メモ作成
+          </Link>
           <Link
             className="rounded-md border border-border bg-white px-4 py-2 text-sm font-medium text-ink transition hover:bg-surface"
             href="/applications"
