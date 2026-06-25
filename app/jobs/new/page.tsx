@@ -29,12 +29,20 @@ export default async function NewJobPage() {
           description="求人票や紹介された求人の内容を登録します。"
           title="求人を登録"
         />
-        <Link
-          className="rounded-md border border-border bg-white px-4 py-2 text-sm font-medium text-ink transition hover:bg-surface"
-          href="/jobs"
-        >
-          一覧へ戻る
-        </Link>
+        <div className="flex flex-wrap justify-end gap-2">
+          <Link
+            className="rounded-md border border-border bg-white px-4 py-2 text-sm font-medium text-ink transition hover:bg-surface"
+            href="/jobs/import"
+          >
+            AIで求人票解析
+          </Link>
+          <Link
+            className="rounded-md border border-border bg-white px-4 py-2 text-sm font-medium text-ink transition hover:bg-surface"
+            href="/jobs"
+          >
+            一覧へ戻る
+          </Link>
+        </div>
       </div>
 
       {companiesResult.data && companiesResult.data.length > 0 ? (

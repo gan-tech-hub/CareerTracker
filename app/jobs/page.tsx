@@ -127,12 +127,20 @@ export default async function JobsPage({ searchParams }: JobsPageProps) {
           description="登録済みの求人を一覧で確認し、比較・絞り込みできます。"
           title="求人"
         />
-        <Link
-          className="rounded-md bg-ink px-4 py-2 text-sm font-semibold text-white transition hover:bg-slate-700"
-          href="/jobs/new"
-        >
-          新規登録
-        </Link>
+        <div className="flex flex-wrap justify-end gap-2">
+          <Link
+            className="rounded-md border border-border bg-white px-4 py-2 text-sm font-medium text-ink transition hover:bg-surface"
+            href="/jobs/import"
+          >
+            AIで求人票解析
+          </Link>
+          <Link
+            className="rounded-md bg-ink px-4 py-2 text-sm font-semibold text-white transition hover:bg-slate-700"
+            href="/jobs/new"
+          >
+            新規登録
+          </Link>
+        </div>
       </div>
 
       <JobFilters

@@ -54,6 +54,8 @@ Career Tracker は、Next.js / TypeScript / Tailwind CSS / Supabase で実装し
 - ステータス別応募件数表示
 - タスク完了状態の直接切り替え
 - Supabase RLSによるユーザー別データ制御
+- OpenAI APIによる求人票解析
+- OpenAI API未設定時のモック解析fallback
 
 ## Tech Stack
 
@@ -97,6 +99,7 @@ Career Tracker は、Next.js / TypeScript / Tailwind CSS / Supabase で実装し
 - `/contacts/[id]`
 - `/contacts/[id]/edit`
 - `/jobs`
+- `/jobs/import`
 - `/jobs/new`
 - `/jobs/[id]`
 - `/jobs/[id]/edit`
@@ -133,6 +136,8 @@ cp .env.example .env.local
 ```env
 NEXT_PUBLIC_SUPABASE_URL=
 NEXT_PUBLIC_SUPABASE_ANON_KEY=
+OPENAI_API_KEY=
+OPENAI_MODEL=
 ```
 
 4. Supabase SQL Editorでデータベーススキーマを実行します。
@@ -141,15 +146,24 @@ NEXT_PUBLIC_SUPABASE_ANON_KEY=
 
 SQL Editorへ貼り付ける際は、SQL本文のみを実行してください。Markdownのコードフェンス（```sql など）は含めないでください。
 
-5. Supabase Authenticationでログイン用ユーザーを作成します。
+5. AI求人票解析を実APIで利用する場合は、`.env.local` にOpenAI APIキーを設定します。
 
-6. 開発サーバーを起動します。
+```env
+OPENAI_API_KEY=
+OPENAI_MODEL=gpt-4o-mini
+```
+
+`OPENAI_API_KEY` が未設定の場合、求人票解析はデモ用のモック結果を表示します。
+
+6. Supabase Authenticationでログイン用ユーザーを作成します。
+
+7. 開発サーバーを起動します。
 
 ```bash
 npm run dev
 ```
 
-7. ブラウザでアプリを開きます。
+8. ブラウザでアプリを開きます。
 
 ```text
 http://localhost:3000/login
@@ -186,13 +200,14 @@ MVPは完成済みです。
 | Phase3 | 応募・選考、面談予定、タスク・期限、カンバン | 完了 |
 | Phase4 | ダッシュボード、期限注意、ステータス別件数、関連表示 | 完了 |
 | Phase5 | ドキュメント整理、UX改善、ダッシュボード改善、リリース準備 | 完了 |
-| Phase6 | ポートフォリオ化、デモデータ、スクリーンショット整備 | 進行中 |
+| Phase6 | ポートフォリオ化、デモデータ、スクリーンショット整備 | 完了 |
+| Phase7 | AI機能 | 進行中 |
 
 詳細な進捗は [docs/development_log.md](./docs/development_log.md) に記録しています。
 
 ## Roadmap
 
-- AI求人票解析
+- AI求人票解析の精度改善
 - CSV出力
 - 通知機能
 - Googleカレンダー連携
