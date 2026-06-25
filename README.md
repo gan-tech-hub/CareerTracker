@@ -57,6 +57,7 @@ Career Tracker は、Next.js / TypeScript / Tailwind CSS / Supabase で実装し
 - OpenAI APIによる求人票解析
 - OpenAI APIによる応募・面接準備メモ生成
 - OpenAI APIによる選考状況サマリー生成
+- AI生成タスク案からのタスク作成
 - OpenAI API未設定時のモック解析fallback
 
 ## Tech Stack

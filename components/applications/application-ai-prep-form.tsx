@@ -3,8 +3,10 @@
 import { useActionState } from "react";
 import { useFormStatus } from "react-dom";
 import {
+  createTaskFromAiSuggestion,
   generateApplicationPrep,
   type ApplicationAiPrepState,
+  type CreateAiPrepTaskState,
 } from "@/app/applications/[id]/ai-prep/actions";
 import { APPLICATION_PREP_MODES } from "@/lib/ai/application-prep";
 
@@ -36,6 +38,80 @@ function ResultList({ items, title }: { items: string[]; title: string }) {
         <ul className="mt-3 list-disc space-y-2 pl-5 text-sm text-ink">
           {items.map((item) => (
             <li key={item}>{item}</li>
+          ))}
+        </ul>
+      )}
+    </section>
+  );
+}
+
+function CreateTaskSubmitButton({ disabled }: { disabled: boolean }) {
+  const { pending } = useFormStatus();
+
+  return (
+    <button
+      className="shrink-0 rounded-md border border-border bg-white px-3 py-1.5 text-xs font-medium text-ink transition hover:bg-surface disabled:cursor-not-allowed disabled:opacity-60"
+      disabled={disabled || pending}
+      type="submit"
+    >
+      {pending ? "作成中" : "タスク作成"}
+    </button>
+  );
+}
+
+function AiPrepTaskSuggestion({
+  applicationId,
+  title,
+}: {
+  applicationId: string;
+  title: string;
+}) {
+  const action = createTaskFromAiSuggestion.bind(null, applicationId);
+  const [state, formAction] = useActionState<CreateAiPrepTaskState, FormData>(
+    action,
+    {},
+  );
+  const isCreated = Boolean(state.successMessage);
+
+  return (
+    <li className="rounded-md border border-border px-3 py-2">
+      <div className="flex items-start justify-between gap-3">
+        <span>{title}</span>
+        <form action={formAction}>
+          <input name="title" type="hidden" value={title} />
+          <CreateTaskSubmitButton disabled={isCreated} />
+        </form>
+      </div>
+      {state.formError ? (
+        <p className="mt-2 text-xs text-red-700">{state.formError}</p>
+      ) : null}
+      {state.successMessage ? (
+        <p className="mt-2 text-xs text-emerald-700">{state.successMessage}</p>
+      ) : null}
+    </li>
+  );
+}
+
+function PrepTaskSuggestionList({
+  applicationId,
+  items,
+}: {
+  applicationId: string;
+  items: string[];
+}) {
+  return (
+    <section>
+      <h3 className="text-sm font-semibold text-ink">準備タスク案</h3>
+      {items.length === 0 ? (
+        <p className="mt-2 text-sm text-muted">生成結果はありません。</p>
+      ) : (
+        <ul className="mt-3 space-y-2 text-sm text-ink">
+          {items.map((item) => (
+            <AiPrepTaskSuggestion
+              applicationId={applicationId}
+              key={item}
+              title={item}
+            />
           ))}
         </ul>
       )}
@@ -139,9 +215,9 @@ export function ApplicationAiPrepForm({
                   title="逆質問案"
                 />
                 <ResultList items={result.concerns} title="懸念点・確認事項" />
-                <ResultList
+                <PrepTaskSuggestionList
+                  applicationId={applicationId}
                   items={result.preparation_tasks}
-                  title="準備タスク案"
                 />
               </div>
 
