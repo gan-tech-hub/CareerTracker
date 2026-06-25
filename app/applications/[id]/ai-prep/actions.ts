@@ -1,5 +1,6 @@
 "use server";
 
+import { revalidatePath } from "next/cache";
 import {
   applicationPrepJsonSchema,
   createMockApplicationPrep,
@@ -19,6 +20,11 @@ export type ApplicationAiPrepState = {
   formError?: string;
   result?: ApplicationPrepResponse;
   selectedMode?: ApplicationPrepMode;
+};
+
+export type CreateAiPrepTaskState = {
+  formError?: string;
+  successMessage?: string;
 };
 
 type ApplicationAiContext = {
@@ -119,6 +125,13 @@ function extractResponseText(value: unknown): string | null {
   }
 
   return null;
+}
+
+function toDateInputValue(date: Date) {
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+  const day = String(date.getDate()).padStart(2, "0");
+  return `${year}-${month}-${day}`;
 }
 
 async function loadApplicationContext(
@@ -360,4 +373,66 @@ export async function generateApplicationPrep(
       selectedMode: modeValue,
     };
   }
+}
+
+export async function createTaskFromAiSuggestion(
+  applicationId: string,
+  _previousState: CreateAiPrepTaskState,
+  formData: FormData,
+): Promise<CreateAiPrepTaskState> {
+  const title = String(formData.get("title") ?? "").trim();
+
+  if (!title) {
+    return { formError: "タスク名を確認できませんでした。" };
+  }
+
+  if (title.length > 200) {
+    return { formError: "タスク名は200文字以内にしてください。" };
+  }
+
+  const supabase = await createSupabaseServerClient();
+  const {
+    data: { user },
+    error: userError,
+  } = await supabase.auth.getUser();
+
+  if (userError || !user) {
+    return { formError: "ログイン状態を確認できませんでした。" };
+  }
+
+  const { data: application, error: applicationError } = await supabase
+    .from("applications")
+    .select("id")
+    .eq("id", applicationId)
+    .eq("user_id", user.id)
+    .maybeSingle();
+
+  if (applicationError || !application) {
+    return { formError: "応募・選考情報を確認できませんでした。" };
+  }
+
+  const dueDate = new Date();
+  dueDate.setDate(dueDate.getDate() + 1);
+
+  const { error: insertError } = await supabase.from("tasks").insert({
+    application_id: applicationId,
+    due_date: toDateInputValue(dueDate),
+    is_completed: false,
+    memo: "AI応募・面接準備アシスタントから作成",
+    priority: "中",
+    title,
+    type: "面談準備",
+    user_id: user.id,
+  });
+
+  if (insertError) {
+    return { formError: `タスク作成に失敗しました: ${insertError.message}` };
+  }
+
+  revalidatePath("/dashboard");
+  revalidatePath("/tasks");
+  revalidatePath(`/applications/${applicationId}`);
+  revalidatePath(`/applications/${applicationId}/ai-prep`);
+
+  return { successMessage: "タスクを作成しました。" };
 }
