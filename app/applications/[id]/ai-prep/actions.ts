@@ -7,6 +7,7 @@ import {
   isApplicationPrepMode,
   normalizeApplicationPrepResult,
   type ApplicationPrepMode,
+  type ApplicationPrepResult,
   type ApplicationPrepResponse,
 } from "@/lib/ai/application-prep";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
@@ -23,6 +24,11 @@ export type ApplicationAiPrepState = {
 };
 
 export type CreateAiPrepTaskState = {
+  formError?: string;
+  successMessage?: string;
+};
+
+export type AppendAiPrepMemoState = {
   formError?: string;
   successMessage?: string;
 };
@@ -132,6 +138,65 @@ function toDateInputValue(date: Date) {
   const month = String(date.getMonth() + 1).padStart(2, "0");
   const day = String(date.getDate()).padStart(2, "0");
   return `${year}-${month}-${day}`;
+}
+
+function formatDateTimeForMemo(date: Date) {
+  return new Intl.DateTimeFormat("ja-JP", {
+    dateStyle: "medium",
+    timeStyle: "short",
+  }).format(date);
+}
+
+function getFormString(formData: FormData, key: string) {
+  return String(formData.get(key) ?? "").trim();
+}
+
+function getFormStringList(formData: FormData, key: string) {
+  return formData
+    .getAll(key)
+    .map((value) => String(value).trim())
+    .filter(Boolean);
+}
+
+function formatListForMemo(items: string[]) {
+  if (items.length === 0) {
+    return "- なし";
+  }
+
+  return items.map((item) => `- ${item}`).join("\n");
+}
+
+function buildAiPrepMemoText(
+  mode: string,
+  result: ApplicationPrepResult,
+  createdAt: Date,
+) {
+  return [
+    "## AI応募・面接準備メモ",
+    `作成日時: ${formatDateTimeForMemo(createdAt)}`,
+    `生成モード: ${mode || "未指定"}`,
+    "",
+    "### 要約",
+    result.summary || "なし",
+    "",
+    "### アピールポイント",
+    formatListForMemo(result.appeal_points),
+    "",
+    "### 想定質問",
+    formatListForMemo(result.expected_questions),
+    "",
+    "### 逆質問案",
+    formatListForMemo(result.reverse_questions),
+    "",
+    "### 懸念点・確認事項",
+    formatListForMemo(result.concerns),
+    "",
+    "### 準備タスク案",
+    formatListForMemo(result.preparation_tasks),
+    "",
+    "### メモ",
+    result.memo || "なし",
+  ].join("\n");
 }
 
 async function loadApplicationContext(
@@ -435,4 +500,74 @@ export async function createTaskFromAiSuggestion(
   revalidatePath(`/applications/${applicationId}/ai-prep`);
 
   return { successMessage: "タスクを作成しました。" };
+}
+
+export async function appendAiPrepToSelectionMemo(
+  applicationId: string,
+  _previousState: AppendAiPrepMemoState,
+  formData: FormData,
+): Promise<AppendAiPrepMemoState> {
+  const mode = getFormString(formData, "mode");
+  const result: ApplicationPrepResult = {
+    appeal_points: getFormStringList(formData, "appeal_points"),
+    concerns: getFormStringList(formData, "concerns"),
+    expected_questions: getFormStringList(formData, "expected_questions"),
+    memo: getFormString(formData, "memo"),
+    preparation_tasks: getFormStringList(formData, "preparation_tasks"),
+    reverse_questions: getFormStringList(formData, "reverse_questions"),
+    summary: getFormString(formData, "summary"),
+  };
+  const hasContent =
+    result.summary ||
+    result.memo ||
+    result.appeal_points.length > 0 ||
+    result.concerns.length > 0 ||
+    result.expected_questions.length > 0 ||
+    result.preparation_tasks.length > 0 ||
+    result.reverse_questions.length > 0;
+
+  if (!hasContent) {
+    return { formError: "追記するAI生成結果を確認できませんでした。" };
+  }
+
+  const supabase = await createSupabaseServerClient();
+  const {
+    data: { user },
+    error: userError,
+  } = await supabase.auth.getUser();
+
+  if (userError || !user) {
+    return { formError: "ログイン状態を確認できませんでした。" };
+  }
+
+  const { data: application, error: applicationError } = await supabase
+    .from("applications")
+    .select("id, selection_memo")
+    .eq("id", applicationId)
+    .eq("user_id", user.id)
+    .maybeSingle();
+
+  if (applicationError || !application) {
+    return { formError: "応募・選考情報を確認できませんでした。" };
+  }
+
+  const memoText = buildAiPrepMemoText(mode, result, new Date());
+  const currentMemo = application.selection_memo?.trim();
+  const nextMemo = currentMemo ? `${currentMemo}\n\n---\n\n${memoText}` : memoText;
+  const { error: updateError } = await supabase
+    .from("applications")
+    .update({ selection_memo: nextMemo })
+    .eq("id", applicationId)
+    .eq("user_id", user.id);
+
+  if (updateError) {
+    return { formError: `選考メモへの追記に失敗しました: ${updateError.message}` };
+  }
+
+  revalidatePath("/dashboard");
+  revalidatePath("/applications");
+  revalidatePath(`/applications/${applicationId}`);
+  revalidatePath(`/applications/${applicationId}/ai-prep`);
+
+  return { successMessage: "選考メモへ追記しました。" };
 }

@@ -73,6 +73,8 @@ VercelのProject Settingsで以下を設定します。
 ```env
 NEXT_PUBLIC_SUPABASE_URL=
 NEXT_PUBLIC_SUPABASE_ANON_KEY=
+OPENAI_API_KEY=
+OPENAI_MODEL=
 ```
 
 設定値はSupabase Project SettingsのAPI設定から取得します。
@@ -82,6 +84,8 @@ NEXT_PUBLIC_SUPABASE_ANON_KEY=
 - `.env.local` はGit管理しません。
 - SupabaseのService Role Keyはフロントエンド向け環境変数に設定しません。
 - `NEXT_PUBLIC_` が付いた値はブラウザにも公開されます。
+- `OPENAI_API_KEY` はサーバー側でのみ使用します。`NEXT_PUBLIC_` は付けないでください。
+- `OPENAI_API_KEY` が未設定の場合、AI機能はモック結果で動作します。
 
 ## 4. Vercelデプロイ
 
@@ -112,6 +116,7 @@ npm run build
 - 自分のデータだけが表示される
 - ダッシュボードの集計が表示される
 - 応募・選考カンバンが表示される
+- AI求人票解析、AI応募・面接準備、AI選考状況サマリーが表示できる
 
 ## 6. 公開時の注意
 
@@ -124,7 +129,9 @@ npm run build
 
 ## 7. 現時点の未実装機能
 
-- AI求人票解析
+- AI求人票解析の精度改善
+- AI生成結果の応募メモへの反映
+- AIサマリーからのタスク作成
 - CSV出力
 - 通知機能
 - Googleカレンダー連携
