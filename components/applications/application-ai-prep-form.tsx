@@ -3,11 +3,14 @@
 import { useActionState } from "react";
 import { useFormStatus } from "react-dom";
 import {
+  appendAiPrepToSelectionMemo,
   createTaskFromAiSuggestion,
   generateApplicationPrep,
+  type AppendAiPrepMemoState,
   type ApplicationAiPrepState,
   type CreateAiPrepTaskState,
 } from "@/app/applications/[id]/ai-prep/actions";
+import type { ApplicationPrepResult } from "@/lib/ai/application-prep";
 import { APPLICATION_PREP_MODES } from "@/lib/ai/application-prep";
 
 type ApplicationAiPrepFormProps = {
@@ -119,6 +122,83 @@ function PrepTaskSuggestionList({
   );
 }
 
+function AppendMemoSubmitButton({ disabled }: { disabled: boolean }) {
+  const { pending } = useFormStatus();
+
+  return (
+    <button
+      className="rounded-md bg-ink px-4 py-2 text-sm font-semibold text-white transition hover:bg-slate-700 disabled:cursor-not-allowed disabled:opacity-60"
+      disabled={disabled || pending}
+      type="submit"
+    >
+      {pending ? "追記中" : "選考メモへ追記"}
+    </button>
+  );
+}
+
+function HiddenListFields({ items, name }: { items: string[]; name: string }) {
+  return (
+    <>
+      {items.map((item) => (
+        <input key={`${name}-${item}`} name={name} type="hidden" value={item} />
+      ))}
+    </>
+  );
+}
+
+function AppendAiPrepMemoForm({
+  applicationId,
+  mode,
+  result,
+}: {
+  applicationId: string;
+  mode: string;
+  result: ApplicationPrepResult;
+}) {
+  const action = appendAiPrepToSelectionMemo.bind(null, applicationId);
+  const [state, formAction] = useActionState<AppendAiPrepMemoState, FormData>(
+    action,
+    {},
+  );
+  const isAppended = Boolean(state.successMessage);
+
+  return (
+    <form
+      action={formAction}
+      className="rounded-md border border-border bg-white px-4 py-3"
+    >
+      <input name="mode" type="hidden" value={mode} />
+      <input name="summary" type="hidden" value={result.summary} />
+      <input name="memo" type="hidden" value={result.memo} />
+      <HiddenListFields items={result.appeal_points} name="appeal_points" />
+      <HiddenListFields items={result.expected_questions} name="expected_questions" />
+      <HiddenListFields items={result.reverse_questions} name="reverse_questions" />
+      <HiddenListFields items={result.concerns} name="concerns" />
+      <HiddenListFields
+        items={result.preparation_tasks}
+        name="preparation_tasks"
+      />
+
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <div>
+          <h3 className="text-sm font-semibold text-ink">選考メモへ保存</h3>
+          <p className="mt-1 text-sm text-muted">
+            生成結果を応募・選考の選考メモへ追記します。
+          </p>
+        </div>
+        <AppendMemoSubmitButton disabled={isAppended} />
+      </div>
+
+      {state.formError ? (
+        <p className="mt-3 text-sm text-red-700">{state.formError}</p>
+      ) : null}
+      {state.successMessage ? (
+        <p className="mt-3 text-sm text-emerald-700">{state.successMessage}</p>
+      ) : null}
+    </form>
+  );
+}
+
 export function ApplicationAiPrepForm({
   applicationId,
 }: ApplicationAiPrepFormProps) {
@@ -194,6 +274,12 @@ export function ApplicationAiPrepForm({
 
           {result ? (
             <div className="space-y-6">
+              <AppendAiPrepMemoForm
+                applicationId={applicationId}
+                mode={state.selectedMode ?? ""}
+                result={result}
+              />
+
               <section>
                 <h3 className="text-sm font-semibold text-ink">要約</h3>
                 <p className="mt-3 whitespace-pre-wrap rounded-md border border-border bg-surface px-4 py-3 text-sm text-ink">

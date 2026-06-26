@@ -58,6 +58,7 @@ Career Tracker は、Next.js / TypeScript / Tailwind CSS / Supabase で実装し
 - OpenAI APIによる応募・面接準備メモ生成
 - OpenAI APIによる選考状況サマリー生成
 - AI生成タスク案からのタスク作成
+- AI生成結果の選考メモへの追記
 - OpenAI API未設定時のモック解析fallback
 
 ## Tech Stack
@@ -151,14 +152,14 @@ OPENAI_MODEL=
 
 SQL Editorへ貼り付ける際は、SQL本文のみを実行してください。Markdownのコードフェンス（```sql など）は含めないでください。
 
-5. AI求人票解析を実APIで利用する場合は、`.env.local` にOpenAI APIキーを設定します。
+5. AI機能を実APIで利用する場合は、`.env.local` にOpenAI APIキーを設定します。
 
 ```env
 OPENAI_API_KEY=
 OPENAI_MODEL=gpt-4o-mini
 ```
 
-`OPENAI_API_KEY` が未設定の場合、求人票解析はデモ用のモック結果を表示します。
+`OPENAI_API_KEY` が未設定の場合、AI機能はデモ用のモック結果を表示します。
 
 6. Supabase Authenticationでログイン用ユーザーを作成します。
 
@@ -213,6 +214,7 @@ MVPは完成済みです。
 ## Roadmap
 
 - AI求人票解析の精度改善
+- AIサマリーからのタスク作成
 - CSV出力
 - 通知機能
 - Googleカレンダー連携
