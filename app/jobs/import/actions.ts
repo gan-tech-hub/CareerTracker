@@ -196,6 +196,13 @@ async function analyzeWithOpenAi(
 
   if (!response.ok) {
     const errorText = await response.text();
+    if (response.status === 429 || errorText.includes("insufficient_quota")) {
+      return createMockJobPostingAnalysis(
+        sourceUrl,
+        "OpenAI APIのクォータ不足またはレート制限のため、モック解析結果を表示しています。",
+      );
+    }
+
     throw new Error(
       `OpenAI API request failed: ${response.status} ${errorText}`,
     );

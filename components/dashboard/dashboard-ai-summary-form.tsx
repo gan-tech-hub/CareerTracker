@@ -3,7 +3,9 @@
 import { useActionState } from "react";
 import { useFormStatus } from "react-dom";
 import {
+  createTaskFromAiSummarySuggestion,
   generateDashboardAiSummary,
+  type CreateSummaryTaskState,
   type DashboardAiSummaryState,
 } from "@/app/dashboard/ai-summary/actions";
 
@@ -31,6 +33,69 @@ function ResultList({ items, title }: { items: string[]; title: string }) {
         <ul className="mt-3 list-disc space-y-2 pl-5 text-sm text-ink">
           {items.map((item) => (
             <li key={item}>{item}</li>
+          ))}
+        </ul>
+      )}
+    </section>
+  );
+}
+
+function CreateTaskSubmitButton({ disabled }: { disabled: boolean }) {
+  const { pending } = useFormStatus();
+
+  return (
+    <button
+      className="shrink-0 rounded-md border border-border bg-white px-3 py-1.5 text-xs font-medium text-ink transition hover:bg-surface disabled:cursor-not-allowed disabled:opacity-60"
+      disabled={disabled || pending}
+      type="submit"
+    >
+      {pending ? "作成中" : "タスク作成"}
+    </button>
+  );
+}
+
+function AiSummaryTaskSuggestion({ title }: { title: string }) {
+  const [state, formAction] = useActionState<CreateSummaryTaskState, FormData>(
+    createTaskFromAiSummarySuggestion,
+    {},
+  );
+  const isCreated = Boolean(state.successMessage);
+
+  return (
+    <li className="rounded-md border border-border px-3 py-2">
+      <div className="flex items-start justify-between gap-3">
+        <span>{title}</span>
+        <form action={formAction}>
+          <input name="title" type="hidden" value={title} />
+          <CreateTaskSubmitButton disabled={isCreated} />
+        </form>
+      </div>
+      {state.formError ? (
+        <p className="mt-2 text-xs text-red-700">{state.formError}</p>
+      ) : null}
+      {state.successMessage ? (
+        <p className="mt-2 text-xs text-emerald-700">{state.successMessage}</p>
+      ) : null}
+    </li>
+  );
+}
+
+function TaskSuggestionList({
+  items,
+  title,
+}: {
+  items: string[];
+  title: string;
+}) {
+  return (
+    <section>
+      <h3 className="text-sm font-semibold text-ink">{title}</h3>
+      {items.length === 0 ? (
+        <p className="mt-2 text-sm text-muted">生成結果はありません。</p>
+      ) : (
+        <ul className="mt-3 space-y-2 text-sm text-ink">
+          {items.map((item) => (
+            <AiSummaryTaskSuggestion key={item} title={item} />
           ))}
         </ul>
       )}
@@ -85,7 +150,7 @@ export function DashboardAiSummaryForm() {
               </section>
 
               <div className="grid gap-6 xl:grid-cols-2">
-                <ResultList
+                <TaskSuggestionList
                   items={result.priority_actions}
                   title="優先アクション"
                 />
@@ -98,7 +163,7 @@ export function DashboardAiSummaryForm() {
                   title="停滞している可能性がある応募"
                 />
                 <ResultList items={result.risks} title="リスク・注意点" />
-                <ResultList
+                <TaskSuggestionList
                   items={result.next_7_days}
                   title="次の7日間でやること"
                 />

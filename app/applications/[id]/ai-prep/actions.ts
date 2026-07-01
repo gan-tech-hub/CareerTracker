@@ -385,6 +385,13 @@ async function generateWithOpenAi(
 
   if (!response.ok) {
     const errorText = await response.text();
+    if (response.status === 429 || errorText.includes("insufficient_quota")) {
+      return createMockApplicationPrep(
+        mode,
+        "OpenAI APIのクォータ不足またはレート制限のため、モック準備メモを表示しています。",
+      );
+    }
+
     throw new Error(
       `OpenAI API request failed: ${response.status} ${errorText}`,
     );

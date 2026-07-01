@@ -80,7 +80,9 @@ export function normalizeSelectionSummaryResult(
   };
 }
 
-export function createMockSelectionSummary(): SelectionSummaryResponse {
+export function createMockSelectionSummary(
+  fallbackReason = "OPENAI_API_KEY が未設定のため、モックサマリーを表示しています。",
+): SelectionSummaryResponse {
   return {
     source: "mock",
     result: {
@@ -108,10 +110,10 @@ export function createMockSelectionSummary(): SelectionSummaryResponse {
         "直近面談の応募詳細を確認する。",
         "志望度が高い応募の次回アクションを明確にする。",
       ],
-      memo: "OpenAI APIキー未設定のため、デモ用の選考状況サマリーを表示しています。",
+      memo: "OpenAI APIを利用できないため、デモ用の選考状況サマリーを表示しています。",
     },
     warnings: [
-      "OPENAI_API_KEY が未設定のため、モックサマリーを表示しています。",
+      fallbackReason,
       "AIサマリーは登録データをもとにした下書きです。実際の状況に合わせて判断してください。",
     ],
   };

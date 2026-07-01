@@ -58,6 +58,7 @@ Career Tracker は、Next.js / TypeScript / Tailwind CSS / Supabase で実装し
 - OpenAI APIによる応募・面接準備メモ生成
 - OpenAI APIによる選考状況サマリー生成
 - AI生成タスク案からのタスク作成
+- AI選考状況サマリーからのタスク作成
 - AI生成結果の選考メモへの追記
 - OpenAI API未設定時のモック解析fallback
 
@@ -214,7 +215,6 @@ MVPは完成済みです。
 ## Roadmap
 
 - AI求人票解析の精度改善
-- AIサマリーからのタスク作成
 - CSV出力
 - 通知機能
 - Googleカレンダー連携

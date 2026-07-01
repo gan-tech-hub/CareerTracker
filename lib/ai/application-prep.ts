@@ -97,12 +97,13 @@ export function normalizeApplicationPrepResult(
 
 export function createMockApplicationPrep(
   mode: ApplicationPrepMode,
+  fallbackReason = "OPENAI_API_KEY が未設定のため、モック準備メモを表示しています。",
 ): ApplicationPrepResponse {
   return {
     source: "mock",
     result: {
       summary:
-        "登録済みの求人・会社・選考情報をもとに、面接前に確認すべき論点を整理します。現在はOpenAI APIキー未設定のため、デモ用の準備メモを表示しています。",
+        "登録済みの求人・会社・選考情報をもとに、面接前に確認すべき論点を整理します。現在はOpenAI APIを利用できないため、デモ用の準備メモを表示しています。",
       appeal_points: [
         "求人で求められている技術や業務内容と、自分の経験が重なる部分を具体例で話せるようにする。",
         "応募先企業の事業内容に対して、なぜ関心を持ったのかを一言で説明できるようにする。",
@@ -130,7 +131,7 @@ export function createMockApplicationPrep(
       memo: `${mode}モードのデモ結果です。実APIを使う場合はOPENAI_API_KEYを設定してください。`,
     },
     warnings: [
-      "OPENAI_API_KEY が未設定のため、モック準備メモを表示しています。",
+      fallbackReason,
       "生成内容は下書きです。実際の経験や志望理由に合わせて修正してください。",
     ],
   };
