@@ -161,6 +161,7 @@ export function normalizeJobPostingAnalysis(
 
 export function createMockJobPostingAnalysis(
   sourceUrl: string | null,
+  fallbackReason = "OPENAI_API_KEY が未設定のため、モック解析結果を表示しています。",
 ): JobPostingAnalysisResult {
   return {
     source: "mock",
@@ -186,10 +187,10 @@ export function createMockJobPostingAnalysis(
       concerns:
         "担当範囲が広いため、優先順位付けや関係者との調整が必要になりそうです。",
       priority: "中",
-      memo: "OpenAI APIキー未設定のため、デモ用の解析結果を表示しています。",
+      memo: "OpenAI APIを利用できないため、デモ用の解析結果を表示しています。",
     },
     warnings: [
-      "OPENAI_API_KEY が未設定のため、モック解析結果を表示しています。",
+      fallbackReason,
       "実データ登録前に、会社・年収・勤務条件を必ず確認してください。",
     ],
   };
