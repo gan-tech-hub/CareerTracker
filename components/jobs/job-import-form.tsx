@@ -216,6 +216,112 @@ function getInitialCompanyId(
   );
 }
 
+function normalizeCompanyName(value: string) {
+  return value
+    .toLowerCase()
+    .replace(/\s/g, "")
+    .replace(/株式会社/g, "")
+    .replace(/合同会社/g, "")
+    .replace(/有限会社/g, "")
+    .replace(/inc\.?/g, "")
+    .replace(/ltd\.?/g, "")
+    .replace(/co\.,?ltd\.?/g, "")
+    .replace(/[・.,，．]/g, "");
+}
+
+function getCompanyMatchInfo(
+  analysis: JobPostingAnalysis,
+  companies: JobSelectOption[],
+) {
+  if (!analysis.company_name) {
+    return { exactMatch: null, suggestions: [] };
+  }
+
+  const normalizedAnalysisName = normalizeCompanyName(analysis.company_name);
+  const matchedCompanies = companies
+    .map((company) => ({
+      company,
+      normalizedName: normalizeCompanyName(company.name),
+    }))
+    .filter(({ normalizedName }) => normalizedName.length > 0);
+  const exactMatch =
+    matchedCompanies.find(
+      ({ normalizedName }) => normalizedName === normalizedAnalysisName,
+    )?.company ?? null;
+
+  if (exactMatch) {
+    return { exactMatch, suggestions: [] };
+  }
+
+  const suggestions = matchedCompanies
+    .filter(({ normalizedName }) => {
+      if (!normalizedAnalysisName || normalizedAnalysisName.length < 2) {
+        return false;
+      }
+
+      return (
+        normalizedName.includes(normalizedAnalysisName) ||
+        normalizedAnalysisName.includes(normalizedName) ||
+        normalizedName.slice(0, 3) === normalizedAnalysisName.slice(0, 3)
+      );
+    })
+    .map(({ company }) => company)
+    .slice(0, 3);
+
+  return { exactMatch, suggestions };
+}
+
+function buildReviewPoints({
+  companyMatch,
+  result,
+}: {
+  companyMatch: ReturnType<typeof getCompanyMatchInfo>;
+  result: JobPostingAnalysis;
+}) {
+  const points: string[] = [];
+
+  if (!result.company_name) {
+    points.push("会社名が抽出されていません。登録先の会社を確認してください。");
+  } else if (!companyMatch.exactMatch) {
+    points.push(
+      "AIが抽出した会社名は既存会社と完全一致していません。登録先の会社を確認してください。",
+    );
+  }
+
+  if (!result.title) {
+    points.push("求人タイトルが抽出されていません。求人票の職種名を確認してください。");
+  }
+
+  if (result.salary_min === null || result.salary_max === null) {
+    points.push("年収下限・上限の一部が未抽出です。給与条件を確認してください。");
+  }
+
+  if (result.remote_type === "不明" || result.remote_type === null) {
+    points.push("リモート可否が不明です。勤務形態を確認してください。");
+  }
+
+  if (
+    result.side_job_allowed === "不明" ||
+    result.side_job_allowed === null
+  ) {
+    points.push("副業可否が不明です。必要であれば面談で確認してください。");
+  }
+
+  if (!result.required_skills) {
+    points.push("必須スキルが抽出されていません。応募条件を確認してください。");
+  }
+
+  if (!result.description) {
+    points.push("業務内容が抽出されていません。仕事内容を確認してください。");
+  }
+
+  if (!result.job_url) {
+    points.push("求人URLが未設定です。後から参照できるURLがあれば入力してください。");
+  }
+
+  return points;
+}
+
 function ImportResultForm({
   analysis,
   companies,
@@ -233,6 +339,17 @@ function ImportResultForm({
   const source = analysis?.source;
   const warnings = analysis?.warnings ?? [];
   const errors = registerState.fieldErrors ?? {};
+  const companyMatch = useMemo(
+    () =>
+      result
+        ? getCompanyMatchInfo(result, companies)
+        : { exactMatch: null, suggestions: [] },
+    [companies, result],
+  );
+  const reviewPoints = useMemo(
+    () => (result ? buildReviewPoints({ companyMatch, result }) : []),
+    [companyMatch, result],
+  );
   const initialCompanyId = useMemo(
     () => (result ? getInitialCompanyId(result, companies) : ""),
     [companies, result],
@@ -279,8 +396,33 @@ function ImportResultForm({
           AIが抽出した会社名:{" "}
           <span className="font-medium text-ink">{result.company_name}</span>
           。登録先の会社は下の選択欄で確認してください。
+          {companyMatch.suggestions.length > 0 ? (
+            <div className="mt-3">
+              <p className="font-medium text-ink">近い会社候補</p>
+              <ul className="mt-2 list-disc space-y-1 pl-5">
+                {companyMatch.suggestions.map((company) => (
+                  <li key={company.id}>{company.name}</li>
+                ))}
+              </ul>
+            </div>
+          ) : null}
         </div>
       ) : null}
+
+      {reviewPoints.length > 0 ? (
+        <div className="rounded-md border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-900">
+          <p className="font-semibold">登録前の確認ポイント</p>
+          <ul className="mt-3 list-disc space-y-1 pl-5">
+            {reviewPoints.map((point) => (
+              <li key={point}>{point}</li>
+            ))}
+          </ul>
+        </div>
+      ) : (
+        <div className="rounded-md border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-800">
+          主な必須項目は抽出されています。登録前に内容を最終確認してください。
+        </div>
+      )}
 
       <Section title="基本情報">
         <div className="grid gap-5 lg:grid-cols-2">
