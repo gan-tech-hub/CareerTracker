@@ -172,10 +172,10 @@ export function createMockJobPostingAnalysis(
       job_type: "バックエンドエンジニア",
       employment_type: "正社員",
       salary_min: 550,
-      salary_max: 850,
+      salary_max: null,
       location: "東京都 / 一部リモート",
       remote_type: "一部リモート",
-      side_job_allowed: "条件付き",
+      side_job_allowed: "不明",
       required_skills:
         "TypeScript、Node.js、REST API設計、RDBを用いたWebアプリケーション開発経験",
       preferred_skills:
@@ -187,7 +187,7 @@ export function createMockJobPostingAnalysis(
       concerns:
         "担当範囲が広いため、優先順位付けや関係者との調整が必要になりそうです。",
       priority: "中",
-      memo: "OpenAI APIを利用できないため、デモ用の解析結果を表示しています。",
+      memo: "年収上限と副業可否は求人票または面談で確認してください。OpenAI APIを利用できないため、デモ用の解析結果を表示しています。",
     },
     warnings: [
       fallbackReason,

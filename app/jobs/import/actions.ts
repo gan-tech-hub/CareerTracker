@@ -174,7 +174,16 @@ async function analyzeWithOpenAi(
         {
           role: "system",
           content:
-            "あなたは日本語の求人票をCareer Trackerへ登録しやすい形に要約・抽出するアシスタントです。明記されていない項目は推測しすぎずnullにしてください。",
+            [
+              "あなたは日本語の求人票をCareer Trackerへ登録しやすい形に要約・抽出するアシスタントです。",
+              "求人票に明記されていない項目は推測しすぎず、文字列項目はnull、remote_typeやside_job_allowedは不明にしてください。",
+              "salary_minとsalary_maxは万円単位の数値に正規化してください。例: 600万円から900万円は600と900、月給だけで年収が不明な場合はnullにしてください。",
+              "remote_typeは必ずフルリモート、一部リモート、原則出社、不明のいずれかにしてください。",
+              "side_job_allowedは必ず可、不可、条件付き、不明のいずれかにしてください。",
+              "employment_typeとpriorityも定義済みの選択肢に寄せ、判断できない場合はnullにしてください。",
+              "attractive_pointsとconcernsは求人票から読み取れる範囲に限定し、過度な推測は避けてください。",
+              "memoには登録前に確認すべき点を短くまとめてください。",
+            ].join("\n"),
         },
         {
           role: "user",
