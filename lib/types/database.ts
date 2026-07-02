@@ -179,6 +179,33 @@ export type Database = {
         Update: Partial<Database["public"]["Tables"]["tasks"]["Row"]>;
         Relationships: [];
       };
+      ai_generation_logs: {
+        Row: {
+          id: string;
+          user_id: string;
+          feature: string;
+          source: string;
+          title: string | null;
+          input_summary: string | null;
+          output: Json;
+          warnings: Json;
+          related_job_id: string | null;
+          related_application_id: string | null;
+          created_at: string;
+        };
+        Insert: Partial<
+          Database["public"]["Tables"]["ai_generation_logs"]["Row"]
+        > & {
+          user_id: string;
+          feature: string;
+          source: string;
+          output: Json;
+        };
+        Update: Partial<
+          Database["public"]["Tables"]["ai_generation_logs"]["Row"]
+        >;
+        Relationships: [];
+      };
     };
     Views: Record<string, never>;
     Functions: Record<string, never>;

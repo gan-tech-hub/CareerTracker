@@ -60,6 +60,7 @@ Career Tracker は、Next.js / TypeScript / Tailwind CSS / Supabase で実装し
 - AI生成タスク案からのタスク作成
 - AI選考状況サマリーからのタスク作成
 - AI生成結果の選考メモへの追記
+- AI生成履歴の保存と一覧表示
 - OpenAI API未設定時のモック解析fallback
 
 ## Tech Stack
@@ -90,6 +91,7 @@ Career Tracker は、Next.js / TypeScript / Tailwind CSS / Supabase で実装し
 ## Available Pages
 
 - `/login`
+- `/ai-history`
 - `/dashboard`
 - `/dashboard/ai-summary`
 - `/services`

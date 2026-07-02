@@ -19,7 +19,9 @@ import {
   normalizeJobPostingAnalysis,
   type JobPostingAnalysisResult,
 } from "@/lib/ai/job-posting";
+import { saveAiGenerationLog } from "@/lib/ai/history";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
+import type { Json } from "@/lib/types/database";
 
 type AnalyzeFieldErrors = {
   source_text?: string;
@@ -268,6 +270,23 @@ export async function analyzeJobPosting(
 
   try {
     const result = await analyzeWithOpenAi(sourceText, sourceUrl);
+    const supabase = await createSupabaseServerClient();
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+
+    if (user) {
+      await saveAiGenerationLog(supabase, {
+        feature: "job_import",
+        inputSummary: sourceText.slice(0, 500),
+        output: result.result as unknown as Json,
+        source: result.source,
+        title: result.result.title ?? "AI求人票解析",
+        userId: user.id,
+        warnings: result.warnings,
+      });
+    }
+
     return { result, values };
   } catch (error) {
     return {

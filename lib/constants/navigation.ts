@@ -1,5 +1,6 @@
 export const navigationItems = [
   { href: "/dashboard", label: "ダッシュボード" },
+  { href: "/ai-history", label: "AI生成履歴" },
   { href: "/services", label: "転職サービス" },
   { href: "/companies", label: "会社" },
   { href: "/contacts", label: "担当者" },
