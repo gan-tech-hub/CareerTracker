@@ -12,8 +12,7 @@ export function Sidebar() {
       <nav aria-label="メインナビゲーション" className="space-y-1">
         {navigationItems.map((item) => {
           const isActive =
-            pathname === item.href ||
-            (item.href !== "/dashboard" && pathname.startsWith(`${item.href}/`));
+            pathname === item.href || pathname.startsWith(`${item.href}/`);
 
           return (
             <Link

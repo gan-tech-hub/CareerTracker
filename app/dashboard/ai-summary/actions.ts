@@ -7,7 +7,9 @@ import {
   selectionSummaryJsonSchema,
   type SelectionSummaryResponse,
 } from "@/lib/ai/selection-summary";
+import { saveAiGenerationLog } from "@/lib/ai/history";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
+import type { Json } from "@/lib/types/database";
 
 export type DashboardAiSummaryState = {
   formError?: string;
@@ -346,6 +348,23 @@ export async function generateDashboardAiSummary(
 
   try {
     const result = await generateWithOpenAi(context);
+    const supabase = await createSupabaseServerClient();
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+
+    if (user) {
+      await saveAiGenerationLog(supabase, {
+        feature: "selection_summary",
+        inputSummary: `応募${context.applications.length}件 / 面談${context.upcoming_interviews.length}件 / 未完了タスク${context.incomplete_tasks.length}件`,
+        output: result.result as unknown as Json,
+        source: result.source,
+        title: "AI選考状況サマリー",
+        userId: user.id,
+        warnings: result.warnings,
+      });
+    }
+
     return { result };
   } catch (error) {
     return {

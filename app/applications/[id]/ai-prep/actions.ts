@@ -10,7 +10,9 @@ import {
   type ApplicationPrepResult,
   type ApplicationPrepResponse,
 } from "@/lib/ai/application-prep";
+import { saveAiGenerationLog } from "@/lib/ai/history";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
+import type { Json } from "@/lib/types/database";
 
 type FieldErrors = {
   mode?: string;
@@ -435,6 +437,24 @@ export async function generateApplicationPrep(
 
   try {
     const result = await generateWithOpenAi(modeValue, context);
+    const supabase = await createSupabaseServerClient();
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+
+    if (user) {
+      await saveAiGenerationLog(supabase, {
+        feature: "application_prep",
+        inputSummary: `${modeValue} / ${context.job?.title ?? "求人未設定"}`,
+        output: result.result as unknown as Json,
+        relatedApplicationId: applicationId,
+        source: result.source,
+        title: `AI応募・面接準備: ${modeValue}`,
+        userId: user.id,
+        warnings: result.warnings,
+      });
+    }
+
     return { result, selectedMode: modeValue };
   } catch (error) {
     return {

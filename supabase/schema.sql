@@ -273,6 +273,31 @@ for each row
 execute function public.set_updated_at();
 
 -- =========================================================
+-- ai_generation_logs
+-- =========================================================
+
+create table if not exists public.ai_generation_logs (
+  id uuid primary key default gen_random_uuid(),
+  user_id uuid not null references auth.users(id) on delete cascade,
+  feature text not null,
+  source text not null,
+  title text,
+  input_summary text,
+  output jsonb not null,
+  warnings jsonb not null default '[]'::jsonb,
+  related_job_id uuid references public.jobs(id) on delete set null,
+  related_application_id uuid references public.applications(id) on delete set null,
+  created_at timestamptz not null default now(),
+
+  constraint ai_generation_logs_feature_check check (
+    feature in ('job_import', 'application_prep', 'selection_summary')
+  ),
+  constraint ai_generation_logs_source_check check (
+    source in ('openai', 'mock')
+  )
+);
+
+-- =========================================================
 -- Indexes
 -- =========================================================
 
@@ -336,6 +361,18 @@ on public.tasks(due_date);
 create index if not exists tasks_is_completed_idx
 on public.tasks(is_completed);
 
+create index if not exists ai_generation_logs_user_id_idx
+on public.ai_generation_logs(user_id);
+
+create index if not exists ai_generation_logs_feature_idx
+on public.ai_generation_logs(feature);
+
+create index if not exists ai_generation_logs_created_at_idx
+on public.ai_generation_logs(created_at);
+
+create index if not exists ai_generation_logs_related_application_id_idx
+on public.ai_generation_logs(related_application_id);
+
 -- =========================================================
 -- Row Level Security
 -- =========================================================
@@ -347,6 +384,7 @@ alter table public.jobs enable row level security;
 alter table public.applications enable row level security;
 alter table public.interviews enable row level security;
 alter table public.tasks enable row level security;
+alter table public.ai_generation_logs enable row level security;
 
 -- =========================================================
 -- RLS Policies - services
@@ -520,5 +558,24 @@ with check (auth.uid() = user_id);
 
 create policy "Users can delete own tasks"
 on public.tasks
+for delete
+using (auth.uid() = user_id);
+
+-- =========================================================
+-- RLS Policies - ai_generation_logs
+-- =========================================================
+
+create policy "Users can select own ai generation logs"
+on public.ai_generation_logs
+for select
+using (auth.uid() = user_id);
+
+create policy "Users can insert own ai generation logs"
+on public.ai_generation_logs
+for insert
+with check (auth.uid() = user_id);
+
+create policy "Users can delete own ai generation logs"
+on public.ai_generation_logs
 for delete
 using (auth.uid() = user_id);
