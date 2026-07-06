@@ -37,6 +37,30 @@ Career Tracker は、Next.js / TypeScript / Tailwind CSS / Supabase で実装し
 
 ![Tasks List](./public/screenshots/tasks-list.png)
 
+### AI Job Import
+
+求人票本文を貼り付けると、AIが求人登録項目を抽出し、登録前の確認ポイントを表示します。
+
+![AI Job Import](./public/screenshots/ai-job-import.png)
+
+### AI Application Prep
+
+応募・求人・会社・面談・タスク情報をもとに、面接準備や応募理由整理の下書きを生成できます。
+
+![AI Application Prep](./public/screenshots/ai-application-prep.png)
+
+### AI Dashboard Summary
+
+応募・面談・タスクの状況から、優先アクションと次の行動案を生成できます。
+
+![AI Dashboard Summary](./public/screenshots/ai-dashboard-summary.png)
+
+### AI Generation History
+
+AIで生成した求人票解析、応募準備メモ、選考状況サマリーの履歴を確認できます。
+
+![AI Generation History](./public/screenshots/ai-history.png)
+
 ## Features
 
 - Supabase Authによるログイン / ログアウト
@@ -210,7 +234,7 @@ MVPは完成済みです。
 | Phase4 | ダッシュボード、期限注意、ステータス別件数、関連表示 | 完了 |
 | Phase5 | ドキュメント整理、UX改善、ダッシュボード改善、リリース準備 | 完了 |
 | Phase6 | ポートフォリオ化、デモデータ、スクリーンショット整備 | 完了 |
-| Phase7 | AI機能 | 進行中 |
+| Phase7 | AI機能、AI確認導線、AI生成履歴 | 完了 |
 
 詳細な進捗は [docs/development_log.md](./docs/development_log.md) に記録しています。
 
@@ -220,8 +244,11 @@ MVPは完成済みです。
 - 通知機能
 - Googleカレンダー連携
 - PDF出力
-- READMEへの追加スクリーンショット反映
 - デモデータと公開用説明の継続改善
+- 求人マッチ度スコア
+- 職務経歴・自己PRの下書き支援
+- 返信文面生成
+- 求人比較コメント生成
 
 ## Notes
 

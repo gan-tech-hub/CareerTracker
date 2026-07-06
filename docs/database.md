@@ -24,6 +24,7 @@ Career Tracker
 | applications | 応募・選考  |
 | interviews   | 面談・面接  |
 | tasks        | タスク・期限 |
+| ai_generation_logs | AI生成履歴 |
 
 ## リレーション概要
 
@@ -38,6 +39,9 @@ jobs 1 --- 0..1 applications
 
 applications 1 --- * interviews
 applications 1 --- * tasks
+
+jobs 1 --- * ai_generation_logs
+applications 1 --- * ai_generation_logs
 ```
 
 ## services
@@ -184,9 +188,27 @@ applications 1 --- * tasks
 | created_at     | timestamptz | yes | 作成日時   |
 | updated_at     | timestamptz | yes | 更新日時   |
 
+## ai_generation_logs
+
+AI求人票解析、AI応募・面接準備、AI選考状況サマリーの生成履歴を管理する。
+
+| カラム                 | 型           | 必須  | 説明 |
+| -------------------- | ----------- | --- | --- |
+| id                   | uuid        | yes | 主キー |
+| user_id              | uuid        | yes | ユーザーID |
+| feature              | text        | yes | AI機能種別 |
+| source               | text        | yes | 生成元。`openai` または `mock` |
+| title                | text        | no  | 履歴タイトル |
+| input_summary        | text        | no  | 入力概要 |
+| output               | jsonb       | yes | AI生成結果 |
+| warnings             | jsonb       | yes | 警告・補足情報 |
+| related_job_id       | uuid        | no  | 関連求人ID |
+| related_application_id | uuid      | no  | 関連応募ID |
+| created_at           | timestamptz | yes | 作成日時 |
+
 ## RLS方針
 
-各テーブルで以下を許可する。
+主要テーブルで以下を許可する。
 
 * 自分のデータのみSELECT可能
 * 自分のデータのみINSERT可能
@@ -198,6 +220,8 @@ applications 1 --- * tasks
 ```sql
 auth.uid() = user_id
 ```
+
+`ai_generation_logs` は履歴用途のため、自分のデータのみSELECT / INSERT / DELETE可能とし、UPDATEは許可しない。
 
 ## インデックス方針
 
@@ -214,3 +238,5 @@ auth.uid() = user_id
 * due_date
 * scheduled_at
 * next_deadline
+* feature
+* created_at
