@@ -29,10 +29,13 @@ npm run dev
 
 - `/login`
 - `/dashboard`
+- `/dashboard/ai-summary`
+- `/ai-history`
 - `/services`
 - `/companies`
 - `/contacts`
 - `/jobs`
+- `/jobs/import`
 - `/applications`
 - `/applications/kanban`
 - `/interviews`
@@ -58,6 +61,7 @@ SupabaseのSQL Editorで `supabase/schema.sql` のSQL本文を実行します。
 - `applications`
 - `interviews`
 - `tasks`
+- `ai_generation_logs`
 
 各テーブルで確認すること:
 
@@ -117,6 +121,7 @@ npm run build
 - ダッシュボードの集計が表示される
 - 応募・選考カンバンが表示される
 - AI求人票解析、AI応募・面接準備、AI選考状況サマリーが表示できる
+- AI生成履歴が表示できる
 
 ## 6. 公開時の注意
 
@@ -129,14 +134,15 @@ npm run build
 
 ## 7. 現時点の未実装機能
 
-- AI求人票解析の精度改善
-- AI生成結果の応募メモへの反映
-- AIサマリーからのタスク作成
 - CSV出力
 - 通知機能
 - Googleカレンダー連携
 - PDF出力
 - ユーザー設定画面
+- 求人マッチ度スコア
+- 職務経歴・自己PRの下書き支援
+- 返信文面生成
+- 求人比較コメント生成
 - 管理者画面
 - ドラッグ&ドロップ式カンバン更新
 
