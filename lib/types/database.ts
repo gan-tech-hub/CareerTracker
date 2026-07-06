@@ -206,6 +206,36 @@ export type Database = {
         >;
         Relationships: [];
       };
+      user_profiles: {
+        Row: {
+          id: string;
+          user_id: string;
+          display_name: string | null;
+          current_position: string | null;
+          desired_role: string | null;
+          desired_industries: string | null;
+          desired_salary_min: number | null;
+          desired_salary_max: number | null;
+          desired_locations: string | null;
+          remote_preference: string;
+          side_job_preference: string;
+          work_style: string | null;
+          career_axis: string | null;
+          avoid_conditions: string | null;
+          strengths: string | null;
+          skills: string | null;
+          learning_interests: string | null;
+          self_pr: string | null;
+          memo: string | null;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: Partial<Database["public"]["Tables"]["user_profiles"]["Row"]> & {
+          user_id: string;
+        };
+        Update: Partial<Database["public"]["Tables"]["user_profiles"]["Row"]>;
+        Relationships: [];
+      };
     };
     Views: Record<string, never>;
     Functions: Record<string, never>;

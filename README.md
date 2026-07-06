@@ -78,6 +78,7 @@ AIで生成した求人票解析、応募準備メモ、選考状況サマリー
 - ステータス別応募件数表示
 - タスク完了状態の直接切り替え
 - Supabase RLSによるユーザー別データ制御
+- プロフィール・希望条件の管理
 - OpenAI APIによる求人票解析と登録前確認ポイント表示
 - OpenAI APIによる応募・面接準備メモ生成
 - OpenAI APIによる選考状況サマリー生成
@@ -111,6 +112,7 @@ AIで生成した求人票解析、応募準備メモ、選考状況サマリー
 | Applications | 応募・選考状況 |
 | Interviews | 面談予定、面接予定 |
 | Tasks | 返信、書類提出、面談準備などの期限付きタスク |
+| Profile | 希望職種、希望年収、転職軸、スキル、自己PR素材 |
 
 ## Available Pages
 
@@ -118,6 +120,8 @@ AIで生成した求人票解析、応募準備メモ、選考状況サマリー
 - `/ai-history`
 - `/dashboard`
 - `/dashboard/ai-summary`
+- `/profile`
+- `/profile/edit`
 - `/services`
 - `/services/new`
 - `/services/[id]`
@@ -235,6 +239,7 @@ MVPは完成済みです。
 | Phase5 | ドキュメント整理、UX改善、ダッシュボード改善、リリース準備 | 完了 |
 | Phase6 | ポートフォリオ化、デモデータ、スクリーンショット整備 | 完了 |
 | Phase7 | AI機能、AI確認導線、AI生成履歴 | 完了 |
+| Phase8 | プロフィール・希望条件、AI拡張 | 進行中 |
 
 詳細な進捗は [docs/development_log.md](./docs/development_log.md) に記録しています。
 

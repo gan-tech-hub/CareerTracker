@@ -9,6 +9,7 @@ const supabaseAnonKey =
 
 const protectedPathPrefixes = [
   "/dashboard",
+  "/profile",
   "/services",
   "/companies",
   "/contacts",
