@@ -298,6 +298,57 @@ create table if not exists public.ai_generation_logs (
 );
 
 -- =========================================================
+-- user_profiles
+-- =========================================================
+
+create table if not exists public.user_profiles (
+  id uuid primary key default gen_random_uuid(),
+  user_id uuid not null unique references auth.users(id) on delete cascade,
+  display_name text,
+  current_position text,
+  desired_role text,
+  desired_industries text,
+  desired_salary_min integer,
+  desired_salary_max integer,
+  desired_locations text,
+  remote_preference text not null default 'こだわらない',
+  side_job_preference text not null default 'こだわらない',
+  work_style text,
+  career_axis text,
+  avoid_conditions text,
+  strengths text,
+  skills text,
+  learning_interests text,
+  self_pr text,
+  memo text,
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+
+  constraint user_profiles_remote_preference_check check (
+    remote_preference in ('フルリモート希望', '一部リモート希望', '出社可', 'こだわらない')
+  ),
+  constraint user_profiles_side_job_preference_check check (
+    side_job_preference in ('希望する', '条件次第', '希望しない', 'こだわらない')
+  ),
+  constraint user_profiles_salary_check check (
+    desired_salary_min is null
+    or desired_salary_max is null
+    or desired_salary_min <= desired_salary_max
+  ),
+  constraint user_profiles_salary_min_check check (
+    desired_salary_min is null or desired_salary_min >= 0
+  ),
+  constraint user_profiles_salary_max_check check (
+    desired_salary_max is null or desired_salary_max >= 0
+  )
+);
+
+create trigger user_profiles_set_updated_at
+before update on public.user_profiles
+for each row
+execute function public.set_updated_at();
+
+-- =========================================================
 -- Indexes
 -- =========================================================
 
@@ -373,6 +424,9 @@ on public.ai_generation_logs(created_at);
 create index if not exists ai_generation_logs_related_application_id_idx
 on public.ai_generation_logs(related_application_id);
 
+create index if not exists user_profiles_user_id_idx
+on public.user_profiles(user_id);
+
 -- =========================================================
 -- Row Level Security
 -- =========================================================
@@ -385,6 +439,7 @@ alter table public.applications enable row level security;
 alter table public.interviews enable row level security;
 alter table public.tasks enable row level security;
 alter table public.ai_generation_logs enable row level security;
+alter table public.user_profiles enable row level security;
 
 -- =========================================================
 -- RLS Policies - services
@@ -577,5 +632,30 @@ with check (auth.uid() = user_id);
 
 create policy "Users can delete own ai generation logs"
 on public.ai_generation_logs
+for delete
+using (auth.uid() = user_id);
+
+-- =========================================================
+-- RLS Policies - user_profiles
+-- =========================================================
+
+create policy "Users can select own user profile"
+on public.user_profiles
+for select
+using (auth.uid() = user_id);
+
+create policy "Users can insert own user profile"
+on public.user_profiles
+for insert
+with check (auth.uid() = user_id);
+
+create policy "Users can update own user profile"
+on public.user_profiles
+for update
+using (auth.uid() = user_id)
+with check (auth.uid() = user_id);
+
+create policy "Users can delete own user profile"
+on public.user_profiles
 for delete
 using (auth.uid() = user_id);

@@ -42,6 +42,70 @@ where user_id = (select user_id from seed_user)
   and title like 'Demo%';
 
 -- =========================================================
+-- user_profiles
+-- =========================================================
+
+insert into public.user_profiles (
+  user_id,
+  display_name,
+  current_position,
+  desired_role,
+  desired_industries,
+  desired_salary_min,
+  desired_salary_max,
+  desired_locations,
+  remote_preference,
+  side_job_preference,
+  work_style,
+  career_axis,
+  avoid_conditions,
+  strengths,
+  skills,
+  learning_interests,
+  self_pr,
+  memo
+)
+select
+  seed_user.user_id,
+  'Demo User',
+  'フロントエンドエンジニア',
+  'フルスタックエンジニア / AIプロダクトエンジニア',
+  'SaaS、AI、Developer Productivity',
+  600,
+  900,
+  '東京都、フルリモート可',
+  '一部リモート希望',
+  '条件次第',
+  'プロダクト改善に近い立場で、フロントエンドからバックエンドまで横断して開発したい。',
+  'ユーザー課題に近い開発、AI活用、裁量のある少人数チーム、継続的なUI改善。',
+  '長時間労働が常態化している環境、技術負債の改善余地が全くない環境。',
+  'React / Next.jsを使った業務アプリUI、要件整理、データ構造を意識した実装。',
+  'TypeScript, React, Next.js, Tailwind CSS, Supabase, PostgreSQL, OpenAI API',
+  'AIエージェント活用、プロダクトマネジメント、設計レビュー、テスト自動化。',
+  '業務アプリの設計から実装、改善まで一貫して担当できます。AI機能を含むCareer Trackerを個人開発し、認証、CRUD、RLS、AI連携、ドキュメント整備まで実装しています。',
+  'Phase8のAIマッチ度スコアや自己PR生成の確認に使うデモプロフィール。'
+from seed_user
+on conflict (user_id) do update
+set
+  display_name = excluded.display_name,
+  current_position = excluded.current_position,
+  desired_role = excluded.desired_role,
+  desired_industries = excluded.desired_industries,
+  desired_salary_min = excluded.desired_salary_min,
+  desired_salary_max = excluded.desired_salary_max,
+  desired_locations = excluded.desired_locations,
+  remote_preference = excluded.remote_preference,
+  side_job_preference = excluded.side_job_preference,
+  work_style = excluded.work_style,
+  career_axis = excluded.career_axis,
+  avoid_conditions = excluded.avoid_conditions,
+  strengths = excluded.strengths,
+  skills = excluded.skills,
+  learning_interests = excluded.learning_interests,
+  self_pr = excluded.self_pr,
+  memo = excluded.memo;
+
+-- =========================================================
 -- services
 -- =========================================================
 

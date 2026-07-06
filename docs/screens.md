@@ -39,6 +39,7 @@ PCブラウザでの利用を主目的とし、情報の一覧性・検索性・
 メニュー:
 
 * ダッシュボード
+* プロフィール
 * AI生成履歴
 * 転職サービス
 * 会社
@@ -61,38 +62,40 @@ PCブラウザでの利用を主目的とし、情報の一覧性・検索性・
 | 1  | ログイン画面     | `/login`                  |
 | 2  | ダッシュボード    | `/dashboard`              |
 | 3  | AI選考状況サマリー | `/dashboard/ai-summary`   |
-| 4  | AI生成履歴      | `/ai-history`             |
-| 5  | 転職サービス一覧   | `/services`               |
-| 6  | 転職サービス新規登録 | `/services/new`           |
-| 7  | 転職サービス詳細   | `/services/[id]`          |
-| 8  | 転職サービス編集   | `/services/[id]/edit`     |
-| 9  | 会社一覧       | `/companies`              |
-| 10 | 会社新規登録     | `/companies/new`          |
-| 11 | 会社詳細       | `/companies/[id]`         |
-| 12 | 会社編集       | `/companies/[id]/edit`    |
-| 13 | 担当者一覧      | `/contacts`               |
-| 14 | 担当者新規登録    | `/contacts/new`           |
-| 15 | 担当者詳細      | `/contacts/[id]`          |
-| 16 | 担当者編集      | `/contacts/[id]/edit`     |
-| 17 | 求人一覧       | `/jobs`                   |
-| 18 | 求人AI取込      | `/jobs/import`            |
-| 19 | 求人新規登録     | `/jobs/new`               |
-| 20 | 求人詳細       | `/jobs/[id]`              |
-| 21 | 求人編集       | `/jobs/[id]/edit`         |
-| 22 | 応募・選考一覧    | `/applications`           |
-| 23 | 応募・選考新規登録  | `/applications/new`       |
-| 24 | 応募・選考詳細    | `/applications/[id]`      |
-| 25 | 応募・選考AI準備  | `/applications/[id]/ai-prep` |
-| 26 | 応募・選考編集    | `/applications/[id]/edit` |
-| 27 | 選考カンバン     | `/applications/kanban`    |
-| 28 | 面談予定一覧     | `/interviews`             |
-| 29 | 面談予定新規登録   | `/interviews/new`         |
-| 30 | 面談予定詳細     | `/interviews/[id]`        |
-| 31 | 面談予定編集     | `/interviews/[id]/edit`   |
-| 32 | タスク一覧      | `/tasks`                  |
-| 33 | タスク新規登録    | `/tasks/new`              |
-| 34 | タスク詳細      | `/tasks/[id]`             |
-| 35 | タスク編集      | `/tasks/[id]/edit`        |
+| 4  | プロフィール詳細   | `/profile`                |
+| 5  | プロフィール編集   | `/profile/edit`           |
+| 6  | AI生成履歴      | `/ai-history`             |
+| 7  | 転職サービス一覧   | `/services`               |
+| 8  | 転職サービス新規登録 | `/services/new`           |
+| 9  | 転職サービス詳細   | `/services/[id]`          |
+| 10 | 転職サービス編集   | `/services/[id]/edit`     |
+| 11 | 会社一覧       | `/companies`              |
+| 12 | 会社新規登録     | `/companies/new`          |
+| 13 | 会社詳細       | `/companies/[id]`         |
+| 14 | 会社編集       | `/companies/[id]/edit`    |
+| 15 | 担当者一覧      | `/contacts`               |
+| 16 | 担当者新規登録    | `/contacts/new`           |
+| 17 | 担当者詳細      | `/contacts/[id]`          |
+| 18 | 担当者編集      | `/contacts/[id]/edit`     |
+| 19 | 求人一覧       | `/jobs`                   |
+| 20 | 求人AI取込      | `/jobs/import`            |
+| 21 | 求人新規登録     | `/jobs/new`               |
+| 22 | 求人詳細       | `/jobs/[id]`              |
+| 23 | 求人編集       | `/jobs/[id]/edit`         |
+| 24 | 応募・選考一覧    | `/applications`           |
+| 25 | 応募・選考新規登録  | `/applications/new`       |
+| 26 | 応募・選考詳細    | `/applications/[id]`      |
+| 27 | 応募・選考AI準備  | `/applications/[id]/ai-prep` |
+| 28 | 応募・選考編集    | `/applications/[id]/edit` |
+| 29 | 選考カンバン     | `/applications/kanban`    |
+| 30 | 面談予定一覧     | `/interviews`             |
+| 31 | 面談予定新規登録   | `/interviews/new`         |
+| 32 | 面談予定詳細     | `/interviews/[id]`        |
+| 33 | 面談予定編集     | `/interviews/[id]/edit`   |
+| 34 | タスク一覧      | `/tasks`                  |
+| 35 | タスク新規登録    | `/tasks/new`              |
+| 36 | タスク詳細      | `/tasks/[id]`             |
+| 37 | タスク編集      | `/tasks/[id]/edit`        |
 
 ---
 
@@ -183,6 +186,60 @@ PCブラウザでの利用を主目的とし、情報の一覧性・検索性・
 * タスク編集へ遷移
 * 応募・選考一覧へ遷移
 * 選考カンバンへ遷移
+
+---
+
+## 5.1 プロフィール詳細画面
+
+### パス
+
+`/profile`
+
+### 目的
+
+求人マッチ度や自己PR生成に利用するプロフィール・希望条件を確認する。
+
+### 表示項目
+
+* 表示名
+* 現在の職種・役割
+* 希望職種
+* 希望業界
+* 希望年収
+* 希望勤務地
+* リモート希望
+* 副業希望
+* 働き方
+* 転職軸
+* 避けたい条件
+* 強み
+* スキル
+* 今後伸ばしたい領域
+* 自己PR素材
+* メモ
+
+### 操作
+
+* 登録
+* 編集
+
+---
+
+## 5.2 プロフィール編集画面
+
+### パス
+
+`/profile/edit`
+
+### 目的
+
+プロフィール・希望条件を登録または編集する。
+
+### バリデーション
+
+* 希望年収は0以上の整数
+* 希望年収下限が希望年収上限を超えないこと
+* リモート希望と副業希望は定義済みの選択肢から選ぶ
 
 ---
 

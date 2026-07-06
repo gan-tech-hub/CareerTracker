@@ -30,6 +30,7 @@ npm run dev
 - `/login`
 - `/dashboard`
 - `/dashboard/ai-summary`
+- `/profile`
 - `/ai-history`
 - `/services`
 - `/companies`
@@ -62,6 +63,7 @@ SupabaseのSQL Editorで `supabase/schema.sql` のSQL本文を実行します。
 - `interviews`
 - `tasks`
 - `ai_generation_logs`
+- `user_profiles`
 
 各テーブルで確認すること:
 
@@ -120,6 +122,7 @@ npm run build
 - 自分のデータだけが表示される
 - ダッシュボードの集計が表示される
 - 応募・選考カンバンが表示される
+- プロフィール・希望条件を登録 / 編集できる
 - AI求人票解析、AI応募・面接準備、AI選考状況サマリーが表示できる
 - AI生成履歴が表示できる
 

@@ -25,6 +25,7 @@ Career Tracker
 | interviews   | 面談・面接  |
 | tasks        | タスク・期限 |
 | ai_generation_logs | AI生成履歴 |
+| user_profiles | プロフィール・希望条件 |
 
 ## リレーション概要
 
@@ -42,6 +43,8 @@ applications 1 --- * tasks
 
 jobs 1 --- * ai_generation_logs
 applications 1 --- * ai_generation_logs
+
+auth.users 1 --- 0..1 user_profiles
 ```
 
 ## services
@@ -205,6 +208,34 @@ AI求人票解析、AI応募・面接準備、AI選考状況サマリーの生�
 | related_job_id       | uuid        | no  | 関連求人ID |
 | related_application_id | uuid      | no  | 関連応募ID |
 | created_at           | timestamptz | yes | 作成日時 |
+
+## user_profiles
+
+プロフィール・希望条件を管理する。1ユーザーにつき1件のみ保持する。
+
+| カラム                 | 型           | 必須  | 説明 |
+| -------------------- | ----------- | --- | --- |
+| id                   | uuid        | yes | 主キー |
+| user_id              | uuid        | yes | ユーザーID。一意 |
+| display_name         | text        | no  | 表示名 |
+| current_position     | text        | no  | 現在の職種・役割 |
+| desired_role         | text        | no  | 希望職種 |
+| desired_industries   | text        | no  | 希望業界 |
+| desired_salary_min   | integer     | no  | 希望年収下限。万円単位 |
+| desired_salary_max   | integer     | no  | 希望年収上限。万円単位 |
+| desired_locations    | text        | no  | 希望勤務地 |
+| remote_preference    | text        | yes | リモート希望 |
+| side_job_preference  | text        | yes | 副業希望 |
+| work_style           | text        | no  | 希望する働き方 |
+| career_axis          | text        | no  | 転職軸 |
+| avoid_conditions     | text        | no  | 避けたい条件 |
+| strengths            | text        | no  | 強み |
+| skills               | text        | no  | スキル |
+| learning_interests   | text        | no  | 今後伸ばしたい領域 |
+| self_pr              | text        | no  | 自己PR素材 |
+| memo                 | text        | no  | メモ |
+| created_at           | timestamptz | yes | 作成日時 |
+| updated_at           | timestamptz | yes | 更新日時 |
 
 ## RLS方針
 
