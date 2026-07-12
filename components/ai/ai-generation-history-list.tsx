@@ -8,6 +8,7 @@ export type AiGenerationHistoryItem = {
   input_summary: string | null;
   output: Json;
   related_application_id: string | null;
+  related_job_id: string | null;
   source: string;
   title: string | null;
   warnings: Json;
@@ -17,6 +18,11 @@ export type AiGenerationHistoryItem = {
       title: string;
       companies: { name: string } | null;
     } | null;
+  } | null;
+  jobs: {
+    id: string;
+    title: string;
+    companies: { name: string } | null;
   } | null;
 };
 
@@ -29,6 +35,8 @@ const featureLabels: Record<string, string> = {
   job_import: "求人票解析",
   selection_summary: "選考状況サマリー",
 };
+
+featureLabels.job_match_score = "求人マッチ度スコア";
 
 function formatDateTime(value: string) {
   return new Intl.DateTimeFormat("ja-JP", {
@@ -79,7 +87,7 @@ export function AiGenerationHistoryList({
   return (
     <div className="space-y-4">
       {logs.map((log) => {
-        const relatedJob = log.applications?.jobs;
+        const relatedJob = log.applications?.jobs ?? log.jobs;
         const preview = previewOutput(log.output);
 
         return (
@@ -111,6 +119,14 @@ export function AiGenerationHistoryList({
                   href={`/applications/${log.related_application_id}`}
                 >
                   関連応募
+                </Link>
+              ) : null}
+              {!log.related_application_id && log.related_job_id ? (
+                <Link
+                  className="text-sm font-medium text-ink underline"
+                  href={`/jobs/${log.related_job_id}`}
+                >
+                  関連求人
                 </Link>
               ) : null}
             </div>
