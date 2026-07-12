@@ -41,6 +41,12 @@ delete from public.jobs
 where user_id = (select user_id from seed_user)
   and title like 'Demo%';
 
+delete from public.career_experiences
+where user_id = (select user_id from seed_user);
+
+delete from public.career_skills
+where user_id = (select user_id from seed_user);
+
 -- =========================================================
 -- user_profiles
 -- =========================================================
@@ -104,6 +110,117 @@ set
   learning_interests = excluded.learning_interests,
   self_pr = excluded.self_pr,
   memo = excluded.memo;
+
+-- =========================================================
+-- career_experiences
+-- =========================================================
+
+insert into public.career_experiences (
+  user_id,
+  company_name,
+  department,
+  position,
+  employment_type,
+  start_date,
+  end_date,
+  is_current,
+  summary,
+  responsibilities,
+  achievements,
+  technologies
+)
+select
+  seed_user.user_id,
+  data.company_name,
+  data.department,
+  data.position,
+  data.employment_type,
+  data.start_date::date,
+  data.end_date::date,
+  data.is_current,
+  data.summary,
+  data.responsibilities,
+  data.achievements,
+  data.technologies
+from seed_user
+cross join (
+  values
+    (
+      'Demo Product Studio株式会社',
+      'Product Engineering',
+      'Frontend Engineer',
+      '正社員',
+      '2023-04-01',
+      null,
+      true,
+      '業務支援SaaSの管理画面とユーザー向けWebアプリの開発を担当。',
+      'Next.js / TypeScriptによる画面実装、UI改善、API連携、データ設計レビュー、AI機能の検証。',
+      'ダッシュボード改善により主要導線の確認時間を短縮。AI求人票解析のプロトタイプを実装。',
+      'TypeScript, React, Next.js, Tailwind CSS, Supabase, PostgreSQL, OpenAI API'
+    ),
+    (
+      'Demo Solutions株式会社',
+      'Web Application Team',
+      'Web Engineer',
+      '正社員',
+      '2020-04-01',
+      '2023-03-31',
+      false,
+      '社内業務アプリと顧客向けポータルの開発を担当。',
+      'Reactによるフロントエンド開発、REST API連携、検索・フィルタUI、フォーム改善。',
+      '入力エラー時の再入力負荷を減らすフォーム改善を実施。問い合わせ対応工数の削減に貢献。',
+      'JavaScript, TypeScript, React, Node.js, PostgreSQL'
+    ),
+    (
+      'Career Tracker',
+      'Personal Project',
+      'Full Stack Developer',
+      '副業',
+      '2026-01-01',
+      null,
+      true,
+      '転職活動管理アプリを個人開発。認証、CRUD、RLS、AI機能、デモデータ、README整備まで実装。',
+      'Next.js App Router、Supabase Auth、PostgreSQL、OpenAI APIを利用した機能開発。',
+      '求人票解析、応募準備メモ、選考状況サマリー、AI生成履歴を実装し、ポートフォリオとして提示可能な状態に整備。',
+      'Next.js, TypeScript, Supabase, Tailwind CSS, OpenAI API, Vercel'
+    )
+) as data(company_name, department, position, employment_type, start_date, end_date, is_current, summary, responsibilities, achievements, technologies);
+
+-- =========================================================
+-- career_skills
+-- =========================================================
+
+insert into public.career_skills (
+  user_id,
+  name,
+  category,
+  skill_level,
+  years_of_experience,
+  last_used_year,
+  description
+)
+select
+  seed_user.user_id,
+  data.name,
+  data.category,
+  data.skill_level,
+  data.years_of_experience,
+  data.last_used_year,
+  data.description
+from seed_user
+cross join (
+  values
+    ('TypeScript', 'Frontend', '得意', 4.0, 2026, '業務アプリの画面実装、型定義、Server Actions周りで利用。'),
+    ('React', 'Frontend', '得意', 4.0, 2026, 'フォーム、一覧、詳細画面などのUI実装で利用。'),
+    ('Next.js', 'Frontend', '実務経験あり', 3.0, 2026, 'App Router、Server Components、Server Actionsを利用。'),
+    ('Tailwind CSS', 'Design', '実務経験あり', 2.0, 2026, '業務アプリ風UIのレイアウト、状態表現、レスポンシブ対応で利用。'),
+    ('Supabase', 'Backend', '実務経験あり', 1.5, 2026, 'Auth、PostgreSQL、RLS、Server Client連携で利用。'),
+    ('PostgreSQL', 'Database', '実務経験あり', 3.0, 2026, 'テーブル設計、制約、インデックス、RLSポリシー設計で利用。'),
+    ('OpenAI API', 'AI', '実務経験あり', 1.0, 2026, '求人票解析、面接準備メモ、選考状況サマリー生成で利用。'),
+    ('GitHub', 'Business', '実務経験あり', 4.0, 2026, 'ブランチ運用、コミット、レビュー前提の差分管理で利用。'),
+    ('要件整理', 'Business', '得意', 3.0, 2026, '業務フローを画面・DB・タスクに分解する整理が得意。'),
+    ('UI改善', 'Design', '実務経験あり', 3.0, 2026, '一覧性、入力保持、バリデーション、関連表示の改善経験。')
+) as data(name, category, skill_level, years_of_experience, last_used_year, description);
 
 -- =========================================================
 -- services

@@ -40,6 +40,7 @@ PCブラウザでの利用を主目的とし、情報の一覧性・検索性・
 
 * ダッシュボード
 * プロフィール
+* 職務経歴
 * AI生成履歴
 * 転職サービス
 * 会社
@@ -64,38 +65,44 @@ PCブラウザでの利用を主目的とし、情報の一覧性・検索性・
 | 3  | AI選考状況サマリー | `/dashboard/ai-summary`   |
 | 4  | プロフィール詳細   | `/profile`                |
 | 5  | プロフィール編集   | `/profile/edit`           |
-| 6  | AI生成履歴      | `/ai-history`             |
-| 7  | 転職サービス一覧   | `/services`               |
-| 8  | 転職サービス新規登録 | `/services/new`           |
-| 9  | 転職サービス詳細   | `/services/[id]`          |
-| 10 | 転職サービス編集   | `/services/[id]/edit`     |
-| 11 | 会社一覧       | `/companies`              |
-| 12 | 会社新規登録     | `/companies/new`          |
-| 13 | 会社詳細       | `/companies/[id]`         |
-| 14 | 会社編集       | `/companies/[id]/edit`    |
-| 15 | 担当者一覧      | `/contacts`               |
-| 16 | 担当者新規登録    | `/contacts/new`           |
-| 17 | 担当者詳細      | `/contacts/[id]`          |
-| 18 | 担当者編集      | `/contacts/[id]/edit`     |
-| 19 | 求人一覧       | `/jobs`                   |
-| 20 | 求人AI取込      | `/jobs/import`            |
-| 21 | 求人新規登録     | `/jobs/new`               |
-| 22 | 求人詳細       | `/jobs/[id]`              |
-| 23 | 求人編集       | `/jobs/[id]/edit`         |
-| 24 | 応募・選考一覧    | `/applications`           |
-| 25 | 応募・選考新規登録  | `/applications/new`       |
-| 26 | 応募・選考詳細    | `/applications/[id]`      |
-| 27 | 応募・選考AI準備  | `/applications/[id]/ai-prep` |
-| 28 | 応募・選考編集    | `/applications/[id]/edit` |
-| 29 | 選考カンバン     | `/applications/kanban`    |
-| 30 | 面談予定一覧     | `/interviews`             |
-| 31 | 面談予定新規登録   | `/interviews/new`         |
-| 32 | 面談予定詳細     | `/interviews/[id]`        |
-| 33 | 面談予定編集     | `/interviews/[id]/edit`   |
-| 34 | タスク一覧      | `/tasks`                  |
-| 35 | タスク新規登録    | `/tasks/new`              |
-| 36 | タスク詳細      | `/tasks/[id]`             |
-| 37 | タスク編集      | `/tasks/[id]/edit`        |
+| 6  | 職務経歴・スキル一覧 | `/career`                 |
+| 7  | 職務経歴新規登録 | `/career/experiences/new` |
+| 8  | 職務経歴詳細 | `/career/experiences/[id]` |
+| 9  | 職務経歴編集 | `/career/experiences/[id]/edit` |
+| 10 | スキル新規登録 | `/career/skills/new` |
+| 11 | スキル編集 | `/career/skills/[id]/edit` |
+| 12 | AI生成履歴      | `/ai-history`             |
+| 13 | 転職サービス一覧   | `/services`               |
+| 14 | 転職サービス新規登録 | `/services/new`           |
+| 15 | 転職サービス詳細   | `/services/[id]`          |
+| 16 | 転職サービス編集   | `/services/[id]/edit`     |
+| 17 | 会社一覧       | `/companies`              |
+| 18 | 会社新規登録     | `/companies/new`          |
+| 19 | 会社詳細       | `/companies/[id]`         |
+| 20 | 会社編集       | `/companies/[id]/edit`    |
+| 21 | 担当者一覧      | `/contacts`               |
+| 22 | 担当者新規登録    | `/contacts/new`           |
+| 23 | 担当者詳細      | `/contacts/[id]`          |
+| 24 | 担当者編集      | `/contacts/[id]/edit`     |
+| 25 | 求人一覧       | `/jobs`                   |
+| 26 | 求人AI取込      | `/jobs/import`            |
+| 27 | 求人新規登録     | `/jobs/new`               |
+| 28 | 求人詳細       | `/jobs/[id]`              |
+| 29 | 求人編集       | `/jobs/[id]/edit`         |
+| 30 | 応募・選考一覧    | `/applications`           |
+| 31 | 応募・選考新規登録  | `/applications/new`       |
+| 32 | 応募・選考詳細    | `/applications/[id]`      |
+| 33 | 応募・選考AI準備  | `/applications/[id]/ai-prep` |
+| 34 | 応募・選考編集    | `/applications/[id]/edit` |
+| 35 | 選考カンバン     | `/applications/kanban`    |
+| 36 | 面談予定一覧     | `/interviews`             |
+| 37 | 面談予定新規登録   | `/interviews/new`         |
+| 38 | 面談予定詳細     | `/interviews/[id]`        |
+| 39 | 面談予定編集     | `/interviews/[id]/edit`   |
+| 40 | タスク一覧      | `/tasks`                  |
+| 41 | タスク新規登録    | `/tasks/new`              |
+| 42 | タスク詳細      | `/tasks/[id]`             |
+| 43 | タスク編集      | `/tasks/[id]/edit`        |
 
 ---
 
@@ -240,6 +247,100 @@ PCブラウザでの利用を主目的とし、情報の一覧性・検索性・
 * 希望年収は0以上の整数
 * 希望年収下限が希望年収上限を超えないこと
 * リモート希望と副業希望は定義済みの選択肢から選ぶ
+
+---
+
+## 5.3 職務経歴・スキル一覧画面
+
+### パス
+
+`/career`
+
+### 目的
+
+求人マッチ度や自己PR生成に使う職務経歴とスキルを管理する。
+
+### 表示項目
+
+* 職務経歴一覧
+* スキル一覧
+* 会社名
+* 役職・役割
+* 期間
+* 現職フラグ
+* 使用技術
+* スキル名
+* カテゴリ
+* レベル
+* 経験年数
+* 最終利用年
+
+### 操作
+
+* 職務経歴を追加
+* 職務経歴詳細へ遷移
+* 職務経歴を編集
+* スキルを追加
+* スキルを編集
+* スキルを削除
+
+---
+
+## 5.4 職務経歴詳細画面
+
+### パス
+
+`/career/experiences/[id]`
+
+### 表示項目
+
+* 会社名
+* 部署
+* 役職・役割
+* 雇用形態
+* 期間
+* 概要
+* 担当業務
+* 実績
+* 使用技術
+
+### 操作
+
+* 編集
+* 削除
+* 一覧へ戻る
+
+---
+
+## 5.5 職務経歴登録・編集画面
+
+### パス
+
+`/career/experiences/new`
+`/career/experiences/[id]/edit`
+
+### バリデーション
+
+* 会社名は必須
+* 雇用形態は定義済みの選択肢から選ぶ
+* 開始日が終了日を超えないこと
+
+---
+
+## 5.6 スキル登録・編集画面
+
+### パス
+
+`/career/skills/new`
+`/career/skills/[id]/edit`
+
+### バリデーション
+
+* スキル名は必須
+* カテゴリは定義済みの選択肢から選ぶ
+* レベルは定義済みの選択肢から選ぶ
+* 経験年数は0以上
+* 最終利用年は1900年以降、現在年+1以内
 
 ---
 
