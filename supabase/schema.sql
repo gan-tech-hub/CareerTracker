@@ -290,7 +290,7 @@ create table if not exists public.ai_generation_logs (
   created_at timestamptz not null default now(),
 
   constraint ai_generation_logs_feature_check check (
-    feature in ('job_import', 'application_prep', 'selection_summary', 'job_match_score')
+    feature in ('job_import', 'application_prep', 'selection_summary', 'job_match_score', 'self_pr_draft')
   ),
   constraint ai_generation_logs_source_check check (
     source in ('openai', 'mock')

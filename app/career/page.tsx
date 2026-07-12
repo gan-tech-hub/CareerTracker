@@ -40,6 +40,12 @@ export default async function CareerPage() {
         <div className="flex items-center gap-2">
           <Link
             className="rounded-md border border-border bg-white px-4 py-2 text-sm font-medium text-ink transition hover:bg-surface"
+            href="/career/ai-draft"
+          >
+            AIで自己PR・職務要約
+          </Link>
+          <Link
+            className="rounded-md border border-border bg-white px-4 py-2 text-sm font-medium text-ink transition hover:bg-surface"
             href="/career/skills/new"
           >
             スキルを追加

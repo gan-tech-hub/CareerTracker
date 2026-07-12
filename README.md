@@ -59,6 +59,10 @@ Career Tracker は、Next.js / TypeScript / Tailwind CSS / Supabase で実装し
 
 求人、プロフィール、希望条件、職務経歴、スキルをもとに、応募判断のためのマッチ度スコアと確認ポイントをAIで生成できます。
 
+### AI Self PR Draft
+
+プロフィール、職務経歴、スキルをもとに、職務要約や自己PRの下書きをAIで生成できます。
+
 ### AI Generation History
 
 AIで生成した求人票解析、応募準備メモ、選考状況サマリーの履歴を確認できます。
