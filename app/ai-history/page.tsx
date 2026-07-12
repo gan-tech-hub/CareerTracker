@@ -17,12 +17,18 @@ export default async function AiHistoryPage() {
         input_summary,
         output,
         related_application_id,
+        related_job_id,
         source,
         title,
         warnings,
         applications(
           id,
           jobs(title, companies(name))
+        ),
+        jobs(
+          id,
+          title,
+          companies(name)
         )
       `,
     )

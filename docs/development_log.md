@@ -185,3 +185,9 @@ npm run typecheck
 npm run lint
 npm run build
 ```
+
+## Phase8-3 Update
+
+- Phase8-3: 求人マッチ度スコアを実装
+- 求人、プロフィール、希望条件、職務経歴、スキルをもとにAIでマッチ度を生成
+- 生成結果をAI生成履歴へ保存し、関連求人へ戻れるように拡張

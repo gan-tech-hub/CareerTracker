@@ -4,7 +4,8 @@ import type { Database, Json } from "@/lib/types/database";
 export type AiGenerationFeature =
   | "job_import"
   | "application_prep"
-  | "selection_summary";
+  | "selection_summary"
+  | "job_match_score";
 
 export type AiGenerationSource = "openai" | "mock";
 
