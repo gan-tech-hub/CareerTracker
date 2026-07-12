@@ -79,6 +79,7 @@ AIで生成した求人票解析、応募準備メモ、選考状況サマリー
 - タスク完了状態の直接切り替え
 - Supabase RLSによるユーザー別データ制御
 - プロフィール・希望条件の管理
+- 職務経歴・スキルの管理
 - OpenAI APIによる求人票解析と登録前確認ポイント表示
 - OpenAI APIによる応募・面接準備メモ生成
 - OpenAI APIによる選考状況サマリー生成
@@ -113,6 +114,7 @@ AIで生成した求人票解析、応募準備メモ、選考状況サマリー
 | Interviews | 面談予定、面接予定 |
 | Tasks | 返信、書類提出、面談準備などの期限付きタスク |
 | Profile | 希望職種、希望年収、転職軸、スキル、自己PR素材 |
+| Career | 職務経歴、担当業務、実績、使用技術、スキル |
 
 ## Available Pages
 
@@ -122,6 +124,12 @@ AIで生成した求人票解析、応募準備メモ、選考状況サマリー
 - `/dashboard/ai-summary`
 - `/profile`
 - `/profile/edit`
+- `/career`
+- `/career/experiences/new`
+- `/career/experiences/[id]`
+- `/career/experiences/[id]/edit`
+- `/career/skills/new`
+- `/career/skills/[id]/edit`
 - `/services`
 - `/services/new`
 - `/services/[id]`

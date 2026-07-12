@@ -349,6 +349,77 @@ for each row
 execute function public.set_updated_at();
 
 -- =========================================================
+-- career_experiences
+-- =========================================================
+
+create table if not exists public.career_experiences (
+  id uuid primary key default gen_random_uuid(),
+  user_id uuid not null references auth.users(id) on delete cascade,
+  company_name text not null,
+  department text,
+  position text,
+  employment_type text not null default '正社員',
+  start_date date,
+  end_date date,
+  is_current boolean not null default false,
+  summary text,
+  responsibilities text,
+  achievements text,
+  technologies text,
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+
+  constraint career_experiences_employment_type_check check (
+    employment_type in ('正社員', '契約社員', '業務委託', '副業', 'インターン', 'その他')
+  ),
+  constraint career_experiences_date_check check (
+    start_date is null
+    or end_date is null
+    or start_date <= end_date
+  )
+);
+
+create trigger career_experiences_set_updated_at
+before update on public.career_experiences
+for each row
+execute function public.set_updated_at();
+
+-- =========================================================
+-- career_skills
+-- =========================================================
+
+create table if not exists public.career_skills (
+  id uuid primary key default gen_random_uuid(),
+  user_id uuid not null references auth.users(id) on delete cascade,
+  name text not null,
+  category text not null default 'Other',
+  skill_level text not null default '実務経験あり',
+  years_of_experience numeric,
+  last_used_year integer,
+  description text,
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+
+  constraint career_skills_category_check check (
+    category in ('Frontend', 'Backend', 'Database', 'Infrastructure', 'AI', 'Design', 'Management', 'Business', 'Other')
+  ),
+  constraint career_skills_level_check check (
+    skill_level in ('実務経験あり', '得意', '学習中', '基礎理解', '興味あり')
+  ),
+  constraint career_skills_years_check check (
+    years_of_experience is null or years_of_experience >= 0
+  ),
+  constraint career_skills_last_used_year_check check (
+    last_used_year is null or last_used_year >= 1900
+  )
+);
+
+create trigger career_skills_set_updated_at
+before update on public.career_skills
+for each row
+execute function public.set_updated_at();
+
+-- =========================================================
 -- Indexes
 -- =========================================================
 
@@ -427,6 +498,18 @@ on public.ai_generation_logs(related_application_id);
 create index if not exists user_profiles_user_id_idx
 on public.user_profiles(user_id);
 
+create index if not exists career_experiences_user_id_idx
+on public.career_experiences(user_id);
+
+create index if not exists career_experiences_start_date_idx
+on public.career_experiences(start_date);
+
+create index if not exists career_skills_user_id_idx
+on public.career_skills(user_id);
+
+create index if not exists career_skills_category_idx
+on public.career_skills(category);
+
 -- =========================================================
 -- Row Level Security
 -- =========================================================
@@ -440,6 +523,8 @@ alter table public.interviews enable row level security;
 alter table public.tasks enable row level security;
 alter table public.ai_generation_logs enable row level security;
 alter table public.user_profiles enable row level security;
+alter table public.career_experiences enable row level security;
+alter table public.career_skills enable row level security;
 
 -- =========================================================
 -- RLS Policies - services
@@ -657,5 +742,55 @@ with check (auth.uid() = user_id);
 
 create policy "Users can delete own user profile"
 on public.user_profiles
+for delete
+using (auth.uid() = user_id);
+
+-- =========================================================
+-- RLS Policies - career_experiences
+-- =========================================================
+
+create policy "Users can select own career experiences"
+on public.career_experiences
+for select
+using (auth.uid() = user_id);
+
+create policy "Users can insert own career experiences"
+on public.career_experiences
+for insert
+with check (auth.uid() = user_id);
+
+create policy "Users can update own career experiences"
+on public.career_experiences
+for update
+using (auth.uid() = user_id)
+with check (auth.uid() = user_id);
+
+create policy "Users can delete own career experiences"
+on public.career_experiences
+for delete
+using (auth.uid() = user_id);
+
+-- =========================================================
+-- RLS Policies - career_skills
+-- =========================================================
+
+create policy "Users can select own career skills"
+on public.career_skills
+for select
+using (auth.uid() = user_id);
+
+create policy "Users can insert own career skills"
+on public.career_skills
+for insert
+with check (auth.uid() = user_id);
+
+create policy "Users can update own career skills"
+on public.career_skills
+for update
+using (auth.uid() = user_id)
+with check (auth.uid() = user_id);
+
+create policy "Users can delete own career skills"
+on public.career_skills
 for delete
 using (auth.uid() = user_id);

@@ -236,6 +236,55 @@ export type Database = {
         Update: Partial<Database["public"]["Tables"]["user_profiles"]["Row"]>;
         Relationships: [];
       };
+      career_experiences: {
+        Row: {
+          id: string;
+          user_id: string;
+          company_name: string;
+          department: string | null;
+          position: string | null;
+          employment_type: string;
+          start_date: string | null;
+          end_date: string | null;
+          is_current: boolean;
+          summary: string | null;
+          responsibilities: string | null;
+          achievements: string | null;
+          technologies: string | null;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: Partial<
+          Database["public"]["Tables"]["career_experiences"]["Row"]
+        > & {
+          user_id: string;
+          company_name: string;
+        };
+        Update: Partial<
+          Database["public"]["Tables"]["career_experiences"]["Row"]
+        >;
+        Relationships: [];
+      };
+      career_skills: {
+        Row: {
+          id: string;
+          user_id: string;
+          name: string;
+          category: string;
+          skill_level: string;
+          years_of_experience: number | null;
+          last_used_year: number | null;
+          description: string | null;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: Partial<Database["public"]["Tables"]["career_skills"]["Row"]> & {
+          user_id: string;
+          name: string;
+        };
+        Update: Partial<Database["public"]["Tables"]["career_skills"]["Row"]>;
+        Relationships: [];
+      };
     };
     Views: Record<string, never>;
     Functions: Record<string, never>;

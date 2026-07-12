@@ -26,6 +26,8 @@ Career Tracker
 | tasks        | タスク・期限 |
 | ai_generation_logs | AI生成履歴 |
 | user_profiles | プロフィール・希望条件 |
+| career_experiences | 職務経歴 |
+| career_skills | スキル |
 
 ## リレーション概要
 
@@ -45,6 +47,8 @@ jobs 1 --- * ai_generation_logs
 applications 1 --- * ai_generation_logs
 
 auth.users 1 --- 0..1 user_profiles
+auth.users 1 --- * career_experiences
+auth.users 1 --- * career_skills
 ```
 
 ## services
@@ -236,6 +240,45 @@ AI求人票解析、AI応募・面接準備、AI選考状況サマリーの生�
 | memo                 | text        | no  | メモ |
 | created_at           | timestamptz | yes | 作成日時 |
 | updated_at           | timestamptz | yes | 更新日時 |
+
+## career_experiences
+
+職務経歴を管理する。
+
+| カラム | 型 | 必須 | 説明 |
+| --- | --- | --- | --- |
+| id | uuid | yes | 主キー |
+| user_id | uuid | yes | ユーザーID |
+| company_name | text | yes | 会社名 |
+| department | text | no | 部署 |
+| position | text | no | 役職・役割 |
+| employment_type | text | yes | 雇用形態 |
+| start_date | date | no | 開始日 |
+| end_date | date | no | 終了日 |
+| is_current | boolean | yes | 現職フラグ |
+| summary | text | no | 概要 |
+| responsibilities | text | no | 担当業務 |
+| achievements | text | no | 実績 |
+| technologies | text | no | 使用技術 |
+| created_at | timestamptz | yes | 作成日時 |
+| updated_at | timestamptz | yes | 更新日時 |
+
+## career_skills
+
+技術スキル、業務スキル、マネジメント経験などを管理する。
+
+| カラム | 型 | 必須 | 説明 |
+| --- | --- | --- | --- |
+| id | uuid | yes | 主キー |
+| user_id | uuid | yes | ユーザーID |
+| name | text | yes | スキル名 |
+| category | text | yes | カテゴリ |
+| skill_level | text | yes | レベル |
+| years_of_experience | numeric | no | 経験年数 |
+| last_used_year | integer | no | 最終利用年 |
+| description | text | no | 説明 |
+| created_at | timestamptz | yes | 作成日時 |
+| updated_at | timestamptz | yes | 更新日時 |
 
 ## RLS方針
 
