@@ -220,7 +220,7 @@ http://localhost:3000/login
 
 [docs/demo-data.md](./docs/demo-data.md) と [supabase/seed.sql](./supabase/seed.sql) を参照してください。
 
-seed SQLは、指定したSupabase Authユーザーに対して、転職サービス、会社、担当者、求人、応募・選考、面談予定、タスクのデモデータを作成します。
+seed SQLは、指定したSupabase Authユーザーに対して、転職サービス、会社、担当者、求人、応募・選考、面談予定、タスク、プロフィール、職務経歴、スキルのデモデータを作成します。
 
 ## Deployment
 
@@ -247,7 +247,7 @@ MVPは完成済みです。
 | Phase5 | ドキュメント整理、UX改善、ダッシュボード改善、リリース準備 | 完了 |
 | Phase6 | ポートフォリオ化、デモデータ、スクリーンショット整備 | 完了 |
 | Phase7 | AI機能、AI確認導線、AI生成履歴 | 完了 |
-| Phase8 | プロフィール・希望条件、AI拡張 | 進行中 |
+| Phase8 | プロフィール・希望条件、職務経歴・スキル、AI拡張 | 進行中 |
 
 詳細な進捗は [docs/development_log.md](./docs/development_log.md) に記録しています。
 
@@ -258,10 +258,11 @@ MVPは完成済みです。
 - Googleカレンダー連携
 - PDF出力
 - デモデータと公開用説明の継続改善
-- 求人マッチ度スコア
-- 職務経歴・自己PRの下書き支援
-- 返信文面生成
-- 求人比較コメント生成
+- Phase8-3: 求人マッチ度スコア
+- Phase8-4: 職務経歴・自己PRの下書き支援
+- Phase8-5: 返信文面生成
+- Phase8-6: 求人比較コメント生成
+- Phase8-7: README・スクリーンショット・デモデータ更新
 
 ## Notes
 
