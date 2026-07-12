@@ -5,7 +5,8 @@ export type AiGenerationFeature =
   | "job_import"
   | "application_prep"
   | "selection_summary"
-  | "job_match_score";
+  | "job_match_score"
+  | "self_pr_draft";
 
 export type AiGenerationSource = "openai" | "mock";
 
