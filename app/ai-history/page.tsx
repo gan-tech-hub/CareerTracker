@@ -42,7 +42,7 @@ export default async function AiHistoryPage() {
   return (
     <>
       <PageHeader
-        description="AI求人票解析、応募・面接準備、選考状況サマリーの生成履歴を確認できます。"
+        description="AI求人票解析、応募・面接準備、選考状況サマリー、求人マッチ度、自己PR、返信文面、求人比較の生成履歴を確認できます。"
         title="AI生成履歴"
       />
       <AiGenerationHistoryList logs={(data ?? []) as AiGenerationHistoryItem[]} />

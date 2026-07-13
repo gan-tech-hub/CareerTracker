@@ -66,6 +66,7 @@ PCブラウザでの利用を主目的とし、情報の一覧性・検索性・
 | 4  | プロフィール詳細   | `/profile`                |
 | 5  | プロフィール編集   | `/profile/edit`           |
 | 6  | 職務経歴・スキル一覧 | `/career`                 |
+| 6.1 | AI自己PR・職務要約下書き | `/career/ai-draft`        |
 | 7  | 職務経歴新規登録 | `/career/experiences/new` |
 | 8  | 職務経歴詳細 | `/career/experiences/[id]` |
 | 9  | 職務経歴編集 | `/career/experiences/[id]/edit` |
@@ -85,14 +86,17 @@ PCブラウザでの利用を主目的とし、情報の一覧性・検索性・
 | 23 | 担当者詳細      | `/contacts/[id]`          |
 | 24 | 担当者編集      | `/contacts/[id]/edit`     |
 | 25 | 求人一覧       | `/jobs`                   |
+| 25.1 | 求人比較AI      | `/jobs/compare`           |
 | 26 | 求人AI取込      | `/jobs/import`            |
 | 27 | 求人新規登録     | `/jobs/new`               |
 | 28 | 求人詳細       | `/jobs/[id]`              |
+| 28.1 | 求人マッチ度AI   | `/jobs/[id]/ai-match`     |
 | 29 | 求人編集       | `/jobs/[id]/edit`         |
 | 30 | 応募・選考一覧    | `/applications`           |
 | 31 | 応募・選考新規登録  | `/applications/new`       |
 | 32 | 応募・選考詳細    | `/applications/[id]`      |
 | 33 | 応募・選考AI準備  | `/applications/[id]/ai-prep` |
+| 33.1 | 応募・選考返信文面AI | `/applications/[id]/reply-draft` |
 | 34 | 応募・選考編集    | `/applications/[id]/edit` |
 | 35 | 選考カンバン     | `/applications/kanban`    |
 | 36 | 面談予定一覧     | `/interviews`             |

@@ -17,7 +17,7 @@ begin;
 
 create temporary table seed_user
 on commit drop
-as select '6c0e41fe-4c7a-40c4-8779-bf506e67faaa'::uuid as user_id;
+as select '00000000-0000-0000-0000-000000000000'::uuid as user_id;
 
 -- =========================================================
 -- Clean existing demo data for the target user

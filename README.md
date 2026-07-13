@@ -59,21 +59,37 @@ Career Tracker は、Next.js / TypeScript / Tailwind CSS / Supabase で実装し
 
 求人、プロフィール、希望条件、職務経歴、スキルをもとに、応募判断のためのマッチ度スコアと確認ポイントをAIで生成できます。
 
+![AI Job Match Score Input](./public/screenshots/ai-job-match-input.png)
+
+![AI Job Match Score Result](./public/screenshots/ai-job-match-result.png)
+
 ### AI Self PR Draft
 
 プロフィール、職務経歴、スキルをもとに、職務要約や自己PRの下書きをAIで生成できます。
+
+![AI Self PR Draft Input](./public/screenshots/ai-self-pr-draft-input.png)
+
+![AI Self PR Draft Result](./public/screenshots/ai-self-pr-draft-result.png)
 
 ### AI Reply Draft
 
 応募・選考情報、求人、会社、面談予定をもとに、企業やエージェントへの返信文面をAIで生成できます。
 
+![AI Reply Draft Input](./public/screenshots/ai-reply-draft-input.png)
+
+![AI Reply Draft Result](./public/screenshots/ai-reply-draft-result.png)
+
 ### AI Job Comparison
 
 複数の求人を選択し、希望条件や応募状況をもとに、応募優先度や確認ポイントをAIで比較できます。
 
+![AI Job Comparison Input](./public/screenshots/ai-job-comparison-input.png)
+
+![AI Job Comparison Result](./public/screenshots/ai-job-comparison-result.png)
+
 ### AI Generation History
 
-AIで生成した求人票解析、応募準備メモ、選考状況サマリーの履歴を確認できます。
+AIで生成した求人票解析、応募準備メモ、選考状況サマリー、求人マッチ度、自己PR、返信文面、求人比較の履歴を確認できます。
 
 ![AI Generation History](./public/screenshots/ai-history.png)
 
@@ -99,6 +115,10 @@ AIで生成した求人票解析、応募準備メモ、選考状況サマリー
 - OpenAI APIによる求人票解析と登録前確認ポイント表示
 - OpenAI APIによる応募・面接準備メモ生成
 - OpenAI APIによる選考状況サマリー生成
+- OpenAI APIによる求人マッチ度スコア生成
+- OpenAI APIによる職務要約・自己PR下書き生成
+- OpenAI APIによる返信文面生成
+- OpenAI APIによる求人比較コメント生成
 - AI生成タスク案からのタスク作成
 - AI選考状況サマリーからのタスク作成
 - AI生成結果の選考メモへの追記
@@ -141,6 +161,7 @@ AIで生成した求人票解析、応募準備メモ、選考状況サマリー
 - `/profile`
 - `/profile/edit`
 - `/career`
+- `/career/ai-draft`
 - `/career/experiences/new`
 - `/career/experiences/[id]`
 - `/career/experiences/[id]/edit`
@@ -159,14 +180,17 @@ AIで生成した求人票解析、応募準備メモ、選考状況サマリー
 - `/contacts/[id]`
 - `/contacts/[id]/edit`
 - `/jobs`
+- `/jobs/compare`
 - `/jobs/import`
 - `/jobs/new`
 - `/jobs/[id]`
+- `/jobs/[id]/ai-match`
 - `/jobs/[id]/edit`
 - `/applications`
 - `/applications/new`
 - `/applications/[id]`
 - `/applications/[id]/ai-prep`
+- `/applications/[id]/reply-draft`
 - `/applications/[id]/edit`
 - `/applications/kanban`
 - `/interviews`
@@ -263,7 +287,7 @@ MVPは完成済みです。
 | Phase5 | ドキュメント整理、UX改善、ダッシュボード改善、リリース準備 | 完了 |
 | Phase6 | ポートフォリオ化、デモデータ、スクリーンショット整備 | 完了 |
 | Phase7 | AI機能、AI確認導線、AI生成履歴 | 完了 |
-| Phase8 | プロフィール・希望条件、職務経歴・スキル、AI拡張 | 進行中 |
+| Phase8 | プロフィール・希望条件、職務経歴・スキル、AI拡張 | 完了 |
 
 詳細な進捗は [docs/development_log.md](./docs/development_log.md) に記録しています。
 
@@ -273,12 +297,6 @@ MVPは完成済みです。
 - 通知機能
 - Googleカレンダー連携
 - PDF出力
-- デモデータと公開用説明の継続改善
-- Phase8-3: 求人マッチ度スコア
-- Phase8-4: 職務経歴・自己PRの下書き支援
-- Phase8-5: 返信文面生成
-- Phase8-6: 求人比較コメント生成
-- Phase8-7: README・スクリーンショット・デモデータ更新
 
 ## Notes
 

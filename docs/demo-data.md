@@ -127,6 +127,10 @@ select '12345678-1234-1234-1234-123456789abc'::uuid as user_id
 9. AI応募・面接準備
 10. AI選考状況サマリー
 11. AI生成履歴
+12. AI求人マッチ度スコア
+13. AI自己PR・職務要約下書き
+14. AI返信文面生成
+15. AI求人比較コメント
 
 READMEで参照するAI機能スクリーンショットの保存先は以下です。
 
@@ -136,6 +140,14 @@ READMEで参照するAI機能スクリーンショットの保存先は以下で
 | AI応募・面接準備 | `public/screenshots/ai-application-prep.png` |
 | AI選考状況サマリー | `public/screenshots/ai-dashboard-summary.png` |
 | AI生成履歴 | `public/screenshots/ai-history.png` |
+| AI求人マッチ度スコア 入力 | `public/screenshots/ai-job-match-input.png` |
+| AI求人マッチ度スコア 結果 | `public/screenshots/ai-job-match-result.png` |
+| AI自己PR・職務要約下書き 入力 | `public/screenshots/ai-self-pr-draft-input.png` |
+| AI自己PR・職務要約下書き 結果 | `public/screenshots/ai-self-pr-draft-result.png` |
+| AI返信文面生成 入力 | `public/screenshots/ai-reply-draft-input.png` |
+| AI返信文面生成 結果 | `public/screenshots/ai-reply-draft-result.png` |
+| AI求人比較コメント 入力 | `public/screenshots/ai-job-comparison-input.png` |
+| AI求人比較コメント 結果 | `public/screenshots/ai-job-comparison-result.png` |
 
 ## AI機能の確認導線
 
@@ -153,8 +165,19 @@ READMEで参照するAI機能スクリーンショットの保存先は以下で
 3. `/dashboard/ai-summary`
    - 転職活動全体のAIサマリーを生成します。
    - 優先アクションや次の7日間の行動案からタスクを作成します。
-4. `/ai-history`
-   - AI求人票解析、AI応募・面接準備、AI選考状況サマリーの生成履歴を確認します。
+4. `/jobs`
+   - 任意の求人詳細を開き、「AIでマッチ度を確認」から求人マッチ度スコアを生成します。
+   - デモデータでは「Demo AI Product Engineer」や「Demo Frontend Engineer」を使うと確認しやすいです。
+5. `/career/ai-draft`
+   - プロフィール、職務経歴、スキルをもとに、職務要約・自己PR・強み整理の下書きを生成します。
+6. `/applications`
+   - 任意の応募・選考詳細を開き、「AIで返信文面を作成」から企業やエージェントへの返信文面を生成します。
+   - 「相手からの連絡内容」と「返信で伝えたいこと」を入力すると、件名と本文を確認できます。
+7. `/jobs/compare`
+   - 複数の求人を選択し、希望条件や応募状況をもとに応募優先度と比較コメントを生成します。
+   - デモデータでは3件以上を選択すると比較結果が見やすくなります。
+8. `/ai-history`
+   - AI求人票解析、AI応募・面接準備、AI選考状況サマリー、求人マッチ度、自己PR、返信文面、求人比較の生成履歴を確認します。
 
 OpenAI APIキーを設定していない場合でも、モック結果で画面確認できます。
 
