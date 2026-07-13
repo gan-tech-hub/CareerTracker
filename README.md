@@ -67,6 +67,10 @@ Career Tracker は、Next.js / TypeScript / Tailwind CSS / Supabase で実装し
 
 応募・選考情報、求人、会社、面談予定をもとに、企業やエージェントへの返信文面をAIで生成できます。
 
+### AI Job Comparison
+
+複数の求人を選択し、希望条件や応募状況をもとに、応募優先度や確認ポイントをAIで比較できます。
+
 ### AI Generation History
 
 AIで生成した求人票解析、応募準備メモ、選考状況サマリーの履歴を確認できます。
