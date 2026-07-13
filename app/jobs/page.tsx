@@ -135,6 +135,12 @@ export default async function JobsPage({ searchParams }: JobsPageProps) {
             AIで求人票解析
           </Link>
           <Link
+            className="rounded-md border border-border bg-white px-4 py-2 text-sm font-medium text-ink transition hover:bg-surface"
+            href="/jobs/compare"
+          >
+            AIで求人比較
+          </Link>
+          <Link
             className="rounded-md bg-ink px-4 py-2 text-sm font-semibold text-white transition hover:bg-slate-700"
             href="/jobs/new"
           >
