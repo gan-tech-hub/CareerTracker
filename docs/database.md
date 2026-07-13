@@ -213,7 +213,7 @@ AI求人票解析、AI応募・面接準備、AI選考状況サマリーの生�
 | related_application_id | uuid      | no  | 関連応募ID |
 | created_at           | timestamptz | yes | 作成日時 |
 
-`ai_generation_logs.feature` には `job_import`, `application_prep`, `selection_summary`, `job_match_score`, `self_pr_draft` を保存する。
+`ai_generation_logs.feature` には `job_import`, `application_prep`, `selection_summary`, `job_match_score`, `self_pr_draft`, `reply_draft` を保存する。
 
 ## user_profiles
 
