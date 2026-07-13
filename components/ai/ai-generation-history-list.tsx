@@ -39,6 +39,7 @@ const featureLabels: Record<string, string> = {
 featureLabels.job_match_score = "求人マッチ度スコア";
 
 featureLabels.self_pr_draft = "自己PR・職務要約下書き";
+featureLabels.reply_draft = "返信文面生成";
 
 function formatDateTime(value: string) {
   return new Intl.DateTimeFormat("ja-JP", {

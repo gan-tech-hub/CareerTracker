@@ -89,6 +89,12 @@ export default async function ApplicationDetailPage({
             カンバンへ戻る
           </Link>
           <Link
+            className="rounded-md border border-border bg-white px-4 py-2 text-sm font-medium text-ink transition hover:bg-surface"
+            href={`/applications/${applicationWithRelations.id}/reply-draft`}
+          >
+            AIで返信文面生成
+          </Link>
+          <Link
             className="rounded-md bg-ink px-4 py-2 text-sm font-semibold text-white transition hover:bg-slate-700"
             href={`/applications/${applicationWithRelations.id}/edit`}
           >
