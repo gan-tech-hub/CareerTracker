@@ -495,6 +495,9 @@ on public.ai_generation_logs(created_at);
 create index if not exists ai_generation_logs_related_application_id_idx
 on public.ai_generation_logs(related_application_id);
 
+create index if not exists ai_generation_logs_related_job_id_idx
+on public.ai_generation_logs(related_job_id);
+
 create index if not exists user_profiles_user_id_idx
 on public.user_profiles(user_id);
 
